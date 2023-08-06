@@ -1,0 +1,21 @@
+{
+  "name": "chaindexing",
+  "version": "0.0.1",
+  "description": "Indexes EVM Chains",
+  "scripts": {
+    "dev": "nodemon",
+    "start": "ts-node ./src/index.ts",
+    "build": "rm -rf ./dist/ && tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Joshua Oladele",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^20.4.8",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  }
+}
