@@ -1,21 +1,18 @@
 {
   "name": "chaindexing",
-  "version": "0.0.1",
-  "description": "Indexes EVM Chains",
+  "private": true,
   "scripts": {
-    "dev": "nodemon",
-    "start": "ts-node ./src/index.ts",
-    "build": "rm -rf ./dist/ && tsc",
+    "build:pg": "cd chaindexing-postgres && pnpm build",
+    "dev:pg": "cd chaindexing-postgres && pnpm dev",
+    "start:pg": "cd chaindexing-postgres && pnpm start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Joshua Oladele",
-  "license": "MIT",
-  "dependencies": {},
   "devDependencies": {
     "@types/node": "^20.4.8",
     "nodemon": "^3.0.1",
     "prettier": "^3.0.1",
     "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.6"
   }
 }

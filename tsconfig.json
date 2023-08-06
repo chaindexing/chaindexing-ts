@@ -7,17 +7,18 @@
     "outDir": "dist",
     "strict": true,
     "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
     "esModuleInterop": true,
     "lib": ["esnext"],
     "sourceMap": true,
     "forceConsistentCasingInFileNames": true,
-    "plugins": [
-      {
-        "transform": "ts-auto-mock/transformer",
-        "cacheBetweenTests": false
-      }
-    ]
+    "plugins": [],
+    "paths": {
+      "@chaindexing": ["chaindexing/src/index.ts"]
+    }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.test.ts", "dist"]
+  "exclude": ["node_modules", "dist"],
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  }
 }
