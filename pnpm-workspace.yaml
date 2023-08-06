@@ -1,0 +1,4 @@
+packages:
+  - 'chaindexing'
+  - 'chaindexing-postgres'
+  - 'chaindexing-tests'
