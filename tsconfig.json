@@ -14,7 +14,8 @@
     "forceConsistentCasingInFileNames": true,
     "plugins": [],
     "paths": {
-      "@chaindexing": ["chaindexing/src/index.ts"]
+      "@chaindexing": ["chaindexing/src/index.ts"],
+      "@chaindexing/repos": ["chaindexing-repos/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "dist"],
