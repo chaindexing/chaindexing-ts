@@ -1,3 +1,2 @@
-export function testProgram() {
-  console.log('Testing program');
-}
+export * from './contracts';
+export * from './events';

@@ -1,7 +1,7 @@
 {
-  "name": "@chaindexing/postgres",
+  "name": "@chaindexing/repos",
   "version": "0.0.1",
-  "description": "Indexes EVM Chains with Postgres Repo",
+  "description": "Chaindexing Repos",
   "sideEffects": false,
   "author": "Joshua Oladele",
   "license": "MIT",
@@ -12,10 +12,7 @@
     "build:watch": "tsc -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
-    "drizzle-orm": "^0.27.2",
-    "postgres": "^3.3.5"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^20.4.8",
     "nodemon": "^3.0.1",
