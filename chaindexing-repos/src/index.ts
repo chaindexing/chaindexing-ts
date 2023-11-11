@@ -7,21 +7,21 @@ export abstract class Repo<Pool, Conn> {
 
   abstract getPool(): Promise<Pool>;
   abstract getConn(): Promise<Conn>;
-  abstract run_in_transaction(
+  abstract runInTransaction(
     conn: Conn,
     repo_ops: (transaction_conn: Conn) => Promise<void>
   ): Promise<void>;
 
-  abstract create_contract_addresses(
+  abstract createContractAddresses(
     conn: Conn,
-    contract_addresses: UnsavedContractAddress[]
+    contractAddresses: UnsavedContractAddress[]
   ): Promise<void>;
-  abstract stream_contract_addresses(
+  abstract streamContractAddresses(
     conn: Conn,
-    streamer: (contract_addresses: ContractAddress[]) => Promise<void>
+    streamer: (contractAddresses: ContractAddress[]) => Promise<void>
   ): Promise<void>;
-  abstract create_events(conn: Conn, events: Event[]): Promise<void>;
-  abstract update_last_ingested_block_number(
+  abstract createEvents(conn: Conn, events: Event[]): Promise<void>;
+  abstract updateLastIngestedBlockNumber(
     conn: Conn,
     contract_addresses: ContractAddress[],
     block_number: number

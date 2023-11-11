@@ -1,14 +1,14 @@
 export interface Event {
-  contract_address: string;
-  contract_name: string;
+  contractAddress: string;
+  contractName: string;
   abi: string;
-  log_params: Map<String, String>;
+  logParams: Map<String, String>;
   parameters: Map<String, String>;
   topics: Map<String, String>;
-  block_hash: string;
-  block_number: number;
-  transaction_hash: string;
-  transaction_index: number;
-  log_index: number;
+  blockHash: string;
+  blockNumber: number;
+  transactionHash: string;
+  transactionIndex: number;
+  logIndex: number;
   removed: boolean;
 }

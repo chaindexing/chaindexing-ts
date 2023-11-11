@@ -26,8 +26,8 @@ export class Config<Pool, Conn, R extends Repo<Pool, Conn>> {
   public contracts: Contract[] = [];
 
   public blocks_per_batch = 20;
-  public handler_rate_ms = 10000;
-  public ingestion_rate_ms = 10000;
+  public handlerRateMs = 10000;
+  public ingestionRateMs = 10000;
 
   constructor(private readonly repo: R) {}
 
@@ -37,14 +37,14 @@ export class Config<Pool, Conn, R extends Repo<Pool, Conn>> {
     return this;
   }
 
-  withHandlerIntervalMs(handler_rate_ms: number): Config<Pool, Conn, R> {
-    this.handler_rate_ms = handler_rate_ms;
+  withHandlerIntervalMs(handlerRateMs: number): Config<Pool, Conn, R> {
+    this.handlerRateMs = handlerRateMs;
 
     return this;
   }
 
-  withIngestionIntervalMs(ingestion_rate_ms: number): Config<Pool, Conn, R> {
-    this.ingestion_rate_ms = ingestion_rate_ms;
+  withIngestionIntervalMs(ingestionRateMs: number): Config<Pool, Conn, R> {
+    this.ingestionRateMs = ingestionRateMs;
 
     return this;
   }

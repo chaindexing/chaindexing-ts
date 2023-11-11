@@ -4,18 +4,18 @@ export interface Contract {
 }
 
 export interface UnsavedContractAddress {
-  contract_name: string;
+  contractName: string;
   address: string;
-  chain_id: number;
-  start_block_number: number;
-  last_ingested_block_number: number;
+  chainId: number;
+  startBlockNumber: number;
+  lastIngestedBlockNumber: number;
 }
 
 export interface ContractAddress {
   id: number;
   chain_id: number;
-  last_ingested_block_number: number;
-  start_block_number: number;
+  lastIngestedBlockNumber: number;
+  startBlockNumber: number;
   address: string;
-  contract_name: string;
+  contractName: string;
 }
