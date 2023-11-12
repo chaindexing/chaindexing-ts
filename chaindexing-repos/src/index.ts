@@ -23,7 +23,7 @@ export abstract class Repo<Pool, Conn> {
   abstract createEvents(conn: Conn, events: Event[]): Promise<void>;
   abstract updateLastIngestedBlockNumber(
     conn: Conn,
-    contract_addresses: ContractAddress[],
+    contractAddresses: ContractAddress[],
     block_number: number
   ): Promise<void>;
 }

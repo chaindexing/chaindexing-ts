@@ -13,7 +13,7 @@ export interface UnsavedContractAddress {
 
 export interface ContractAddress {
   id: number;
-  chain_id: number;
+  chainId: number;
   lastIngestedBlockNumber: number;
   startBlockNumber: number;
   address: string;

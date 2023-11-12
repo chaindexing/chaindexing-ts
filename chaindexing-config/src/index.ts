@@ -25,14 +25,14 @@ export class Config<Pool, Conn, R extends Repo<Pool, Conn>> {
   public chains: Chains = new Map();
   public contracts: Contract[] = [];
 
-  public blocks_per_batch = 20;
+  public blocksPerBatch = 20;
   public handlerRateMs = 10000;
   public ingestionRateMs = 10000;
 
   constructor(private readonly repo: R) {}
 
-  withBlocksPerBatch(blocks_per_batch: number): Config<Pool, Conn, R> {
-    this.blocks_per_batch = blocks_per_batch;
+  withBlocksPerBatch(blocksPerBatch: number): Config<Pool, Conn, R> {
+    this.blocksPerBatch = blocksPerBatch;
 
     return this;
   }
