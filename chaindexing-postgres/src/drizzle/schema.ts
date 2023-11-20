@@ -1,13 +1,31 @@
-import { integer, pgTable, serial, text, uuid, json, date, boolean } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  date,
+  integer,
+  json,
+  pgTable,
+  serial,
+  text,
+  uniqueIndex,
+  uuid
+} from 'drizzle-orm/pg-core';
 
-export const chaindexing_contract_addresses = pgTable('chaindexing_contract_addresses', {
-  id: serial('id').primaryKey(),
-  chainId: integer('chain_id'),
-  lastIngestedBlockNumber: integer('last_ingested_block_number'),
-  startBlockNumber: integer('start_block_number'),
-  address: text('address'),
-  contractName: text('contract_name')
-});
+export const chaindexing_contract_addresses = pgTable(
+  'chaindexing_contract_addresses',
+  {
+    id: serial('id').primaryKey(),
+    chainId: integer('chain_id'),
+    lastIngestedBlockNumber: integer('last_ingested_block_number'),
+    startBlockNumber: integer('start_block_number'),
+    address: text('address'),
+    contractName: text('contract_name')
+  },
+  (chaindexingContractAddress) => ({
+    chaindexingContractAddressesChainAddressIndex: uniqueIndex(
+      'chaindexing_contract_addresses_chain_address_index'
+    ).on(chaindexingContractAddress.chainId, chaindexingContractAddress.address)
+  })
+);
 
 export const chaindexing_events = pgTable('chaindexing_events', {
   id: uuid('id').primaryKey(),
