@@ -23,7 +23,7 @@ export class PostgresRepo extends Repo<Pool, Conn> {
     return drizzle(this.pool);
   }
 
-  async runInTransaction(conn: Conn, repo_ops: any) {
+  async runInTransaction(conn: Conn, repo_ops: (tx: Conn) => Promise<any>) {
     await conn.transaction(repo_ops);
   }
 
