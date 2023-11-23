@@ -10,7 +10,7 @@ import {
   uuid
 } from 'drizzle-orm/pg-core';
 
-export const chaindexing_contract_addresses = pgTable(
+export const chaindexingContractAddressesSchema = pgTable(
   'chaindexing_contract_addresses',
   {
     id: serial('id').primaryKey(),
@@ -27,7 +27,7 @@ export const chaindexing_contract_addresses = pgTable(
   })
 );
 
-export const chaindexing_events = pgTable('chaindexing_events', {
+export const chaindexingEvents = pgTable('chaindexing_events', {
   id: uuid('id').primaryKey(),
   contractAddress: text('contract_address'),
   contractName: text('contract_name'),
