@@ -2,6 +2,11 @@
   "name": "chaindexing",
   "private": true,
   "scripts": {
+    "postgres": "pnpm --filter @chaindexing/postgres",
+    "config": "pnpm --filter @chaindexing/config",
+    "repos": "pnpm --filter @chaindexing/repos",
+    "tests": "pnpm --filter chaindexing-tests",
+    "dev": "pnpm --recursive --parallel --stream run dev",
     "build:pg": "cd chaindexing-postgres && pnpm build",
     "dev:pg": "cd chaindexing-postgres && pnpm dev",
     "start:pg": "cd chaindexing-postgres && pnpm start",
