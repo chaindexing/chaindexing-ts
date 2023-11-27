@@ -1,4 +1,4 @@
-import { ContractAddress, UnsavedContractAddress, Event } from '@chaindexing';
+import { ContractAddress, Event, UnsavedContractAddress } from '@chaindexing';
 
 export abstract class Repo<Pool, Conn> {
   constructor(private readonly url: string) {
@@ -9,7 +9,7 @@ export abstract class Repo<Pool, Conn> {
   abstract getConn(): Promise<Conn>;
   abstract runInTransaction(
     conn: Conn,
-    repo_ops: (transaction_conn: Conn) => Promise<void>
+    repoOps: (transaction_conn: Conn) => Promise<void>
   ): Promise<void>;
 
   abstract createContractAddresses(
@@ -24,6 +24,6 @@ export abstract class Repo<Pool, Conn> {
   abstract updateLastIngestedBlockNumber(
     conn: Conn,
     contractAddresses: ContractAddress[],
-    block_number: number
+    blockNumber: number
   ): Promise<void>;
 }
