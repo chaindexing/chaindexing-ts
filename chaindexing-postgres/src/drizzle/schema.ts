@@ -15,10 +15,10 @@ export const chaindexingContractAddressesSchema = pgTable(
   {
     id: serial('id').primaryKey(),
     chainId: integer('chain_id'),
-    lastIngestedBlockNumber: integer('last_ingested_block_number'),
-    startBlockNumber: integer('start_block_number'),
     address: text('address'),
-    contractName: text('contract_name')
+    contractName: text('contract_name'),
+    nextBlockNumberToIngestFrom: integer('next_block_number_to_ingest_from'),
+    nextBlockNumberToHandleFrom: integer('next_block_number_to_handler_from')
   },
   (chaindexingContractAddress) => ({
     chaindexingContractAddressesChainAddressIndex: uniqueIndex(

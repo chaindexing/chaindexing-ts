@@ -1,4 +1,4 @@
-import { ContractAddress, UnsavedContractAddress } from '@chaindexing';
+import { ContractAddress, Event, UnsavedContractAddress } from '@chaindexing';
 import { Repo } from '@chaindexing/repos';
 import { NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
@@ -7,20 +7,16 @@ import { chaindexingContractAddressesSchema, pool } from './drizzle';
 type Conn = NodePgDatabase<Record<string, never>>;
 
 export class PostgresRepo extends Repo<Pool, Conn> {
-  pool: Pool;
-  conn?: Conn;
-
   constructor(url: string) {
     super(url);
-    this.pool = pool;
   }
 
   async getPool() {
-    return Promise.resolve(this.pool);
+    return Promise.resolve(pool);
   }
 
   async getConn() {
-    return drizzle(this.pool);
+    return drizzle(pool);
   }
 
   async runInTransaction(conn: Conn, repo_ops: (tx: Conn) => Promise<any>) {
@@ -43,7 +39,7 @@ export class PostgresRepo extends Repo<Pool, Conn> {
     return Promise.resolve();
   }
 
-  async createEvents(_conn: Conn, _events: any) {
+  async createEvents(_conn: Conn, _events: Event[]) {
     // TODO: Implement
     return Promise.resolve();
   }
