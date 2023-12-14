@@ -3,14 +3,6 @@ export interface Contract {
   name: string;
 }
 
-export interface UnsavedContractAddress {
-  contractName: string;
-  address: string;
-  chainId: number;
-  startBlockNumber: number;
-  lastIngestedBlockNumber: number;
-}
-
 export interface ContractAddress {
   id: number;
   chainId: number;
@@ -20,3 +12,5 @@ export interface ContractAddress {
   nextBlockNumberToIngestFrom: number;
   nextBlockNumberToHandleFrom: number;
 }
+
+export interface UnsavedContractAddress extends Omit<ContractAddress, 'id'> {}
