@@ -1,2 +1,3 @@
 export * from './drizzle';
-export * from './repo.postgres';
+export { PostgresRepo, Conn as PostgresRepoConn } from './repo';
+export { Pool as PostgresRepoPool } from 'pg';

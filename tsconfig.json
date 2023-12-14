@@ -9,14 +9,16 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "esModuleInterop": true,
-    "lib": ["esnext"],
+    "lib": ["esnext", "ES2023.Array"],
     "sourceMap": true,
     "forceConsistentCasingInFileNames": true,
     "plugins": [],
     "paths": {
       "@chaindexing": ["chaindexing/src/index.ts"],
+      "@chaindexing/core": ["chaindexing-core/src/index.ts"],
       "@chaindexing/repos": ["chaindexing-repos/src/index.ts"],
-      "@chaindexing/config": ["chaindexing-config/src/index.ts"]
+      "@chaindexing/config": ["chaindexing-config/src/index.ts"],
+      "@chaindexing/tests": ["chaindexing-tests/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "dist"],

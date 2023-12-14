@@ -1,3 +1,13 @@
-export * from './contracts';
-export * from './events';
-export * from './chains';
+import { Config } from '@chaindexing/config';
+import { Repo } from '@chaindexing/repos';
+
+export async function indexStates<Pool, Conn, UserRepo extends Repo<Pool, Conn>>(
+  _config: Config<Pool, Conn, UserRepo>
+) {
+  // TODO
+  await setup();
+}
+
+async function setup() {
+  // TODO
+}

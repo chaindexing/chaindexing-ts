@@ -9,6 +9,3 @@ db.drop:
 
 db.reset:
 	make db.stop && make db.drop && make db.start
-
-run:
-	go run .

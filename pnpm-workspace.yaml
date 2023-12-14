@@ -1,5 +1,6 @@
 packages:
   - 'chaindexing'
+  - 'chaindexing-core'
   - 'chaindexing-postgres'
   - 'chaindexing-repos'
   - 'chaindexing-tests'
