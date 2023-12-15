@@ -9,7 +9,7 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "esModuleInterop": true,
-    "lib": ["esnext", "ES2023.Array"],
+    "lib": ["esnext"],
     "sourceMap": true,
     "forceConsistentCasingInFileNames": true,
     "plugins": [],

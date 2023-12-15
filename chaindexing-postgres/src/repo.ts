@@ -37,8 +37,18 @@ export class PostgresRepo implements Repo<Pool, Conn> {
   }
 
   async createContractAddresses(conn: Conn, contractAddresses: UnsavedContractAddress[]) {
-    contractAddresses.length > 0 &&
-      (await conn.insert(chaindexingContractAddressesSchema).values(contractAddresses));
+    if (contractAddresses.length === 0) return;
+
+    await conn
+      .insert(chaindexingContractAddressesSchema)
+      .values(contractAddresses)
+      .onConflictDoUpdate({
+        target: [
+          chaindexingContractAddressesSchema.chainId,
+          chaindexingContractAddressesSchema.address
+        ],
+        set: { contractName: sql`excluded."contract_name"` }
+      });
   }
 
   async streamContractAddresses(

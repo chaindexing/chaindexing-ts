@@ -2,6 +2,13 @@ import { UnsavedContractAddress } from '@chaindexing/core';
 
 // Export global test modules
 export class UnsavedContractAddressFactory {
+  static manyNewConflicting(size: number): UnsavedContractAddress[] {
+    return this.manyNew(size).map((unsavedContractAddress) => ({
+      ...unsavedContractAddress,
+      chainId: 1,
+      address: '0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f12A'
+    }));
+  }
   static manyNew(size: number): UnsavedContractAddress[] {
     return new Array(size).fill(null).map((_, index) => this.new(index));
   }
