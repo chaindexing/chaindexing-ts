@@ -1,5 +1,5 @@
 import { assert, expect } from 'chai';
-import { PostgresRepo, PostgresRepoConn } from 'chaindexing-postgres/src';
+import { PostgresRepo, PostgresRepoConn, PostgresRepoMigrations } from 'chaindexing-postgres/src';
 import { UnsavedContractAddressFactory } from '@chaindexing/tests';
 
 describe('Repo', async () => {
@@ -10,7 +10,8 @@ describe('Repo', async () => {
   const it = getItWithConn(repo, rootConn);
 
   before(async () => {
-    await repo.migrate(rootConn);
+    const postgresRepoMigrations = new PostgresRepoMigrations();
+    await repo.migrate(rootConn, postgresRepoMigrations.getInternalMigrations());
   });
 
   describe('createContractAddresses', async () => {

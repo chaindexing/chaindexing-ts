@@ -1,16 +1,27 @@
-export interface Migratable<Conn> {
-  migrate(conn: Conn): Promise<void>;
+abstract class ExecutesRawQuery<Conn> {
+  abstract execute_raw_query(conn: Conn, query: string): Promise<void>;
 }
 
-export interface RepoMigrations {
-  create_contract_addresses_migration(): string[];
-  drop_contract_addresses_migration(): string[];
-  create_events_migration(): string[];
-  drop_events_migration(): string[];
+export abstract class Migratable<Conn> extends ExecutesRawQuery<Conn> {
+  async migrate(conn: Conn, migrations: string[]) {
+    for (const migration of migrations) {
+      await this.execute_raw_query(conn, migration);
+    }
+  }
+}
+
+export abstract class RepoMigrations {
+  abstract create_contract_addresses_migration(): string[];
+  abstract drop_contract_addresses_migration(): string[];
+  abstract create_events_migration(): string[];
+  abstract drop_events_migration(): string[];
+  getInternalMigrations(): string[] {
+    return [this.create_contract_addresses_migration(), this.create_events_migration()].flat();
+  }
 }
 
 export class SQLikeMigrations {
-  create_contract_addresses_migration() {
+  static create_contract_addresses() {
     return [
       `CREATE TABLE IF NOT EXISTS chaindexing_contract_addresses (
         id SERIAL PRIMARY KEY,
@@ -26,11 +37,11 @@ export class SQLikeMigrations {
     ];
   }
 
-  drop_contract_addresses_migration() {
+  static drop_contract_addresses() {
     return [`DROP TABLE IF EXISTS chaindexing_contract_addresses`];
   }
 
-  create_events_migration() {
+  static create_events() {
     return [
       `CREATE TABLE IF NOT EXISTS chaindexing_events (
         id uuid PRIMARY KEY,
@@ -57,7 +68,7 @@ export class SQLikeMigrations {
     ];
   }
 
-  drop_events_migration() {
+  static drop_events() {
     return [`DROP TABLE IF EXISTS chaindexing_events`];
   }
 }

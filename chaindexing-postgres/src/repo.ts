@@ -4,21 +4,17 @@ import { NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { chaindexingContractAddressesSchema } from './drizzle';
 import { sql } from 'drizzle-orm';
-import { PostgresRepoMigrations } from './migrations';
 import * as schema from './drizzle/schema';
 
 export type Conn = NodePgDatabase<typeof schema>;
 
-export class PostgresRepo implements Repo<Pool, Conn> {
-  constructor(private readonly url: string) {}
+export class PostgresRepo extends Repo<Pool, Conn> {
+  constructor(private readonly url: string) {
+    super();
+  }
 
-  async migrate(conn: Conn): Promise<void> {
-    const { create_contract_addresses_migration, create_events_migration } =
-      new PostgresRepoMigrations();
-    const migrations = [create_contract_addresses_migration(), create_events_migration()].flat();
-    for (const migration of migrations) {
-      await conn.execute(sql.raw(migration));
-    }
+  async execute_raw_query(conn: Conn, query: string) {
+    await conn.execute(sql.raw(query));
   }
 
   async getPool(maxSize: number) {
