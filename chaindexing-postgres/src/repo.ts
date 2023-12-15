@@ -1,4 +1,4 @@
-import { ContractAddress, Event, UnsavedContractAddress } from 'chaindexing-core/src';
+import { ContractAddress, Event, UnsavedContractAddress } from '@chaindexing/core';
 import { Repo } from '@chaindexing/repos';
 import { NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';

@@ -1,4 +1,4 @@
-import { ContractAddress, Event, UnsavedContractAddress } from 'chaindexing-core/src';
+import { ContractAddress, Event, UnsavedContractAddress } from '@chaindexing/core';
 import { Migratable } from './migrations';
 
 export interface Repo<Pool, Conn> extends Migratable<Conn> {
