@@ -1,7 +1,7 @@
 {
-  "name": "chaindexing",
+  "name": "@chaindexing/core",
   "version": "0.0.1",
-  "description": "Indexes EVM Chains",
+  "description": "Houses core classes/function for composing chaindexing processes",
   "sideEffects": false,
   "keywords": [],
   "author": "Joshua Oladele",

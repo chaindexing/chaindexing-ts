@@ -1,17 +1,13 @@
-import { ContractAddress, UnsavedContractAddress, Event } from '@chaindexing';
+import { ContractAddress, Event, UnsavedContractAddress } from '@chaindexing/core';
+import { Migratable } from './migrations';
 
-export abstract class Repo<Pool, Conn> {
-  constructor(private readonly url: string) {
-    this.url = url;
-  }
-
-  abstract getPool(): Promise<Pool>;
-  abstract getConn(): Promise<Conn>;
+export abstract class Repo<Pool, Conn> extends Migratable<Conn> {
+  abstract getPool(maxSize: number): Promise<Pool>;
+  abstract getConn(pool: Pool): Promise<Conn>;
   abstract runInTransaction(
     conn: Conn,
-    repo_ops: (transaction_conn: Conn) => Promise<void>
+    repoOps: (transaction_conn: Conn) => Promise<void>
   ): Promise<void>;
-
   abstract createContractAddresses(
     conn: Conn,
     contractAddresses: UnsavedContractAddress[]
@@ -24,6 +20,8 @@ export abstract class Repo<Pool, Conn> {
   abstract updateLastIngestedBlockNumber(
     conn: Conn,
     contractAddresses: ContractAddress[],
-    block_number: number
+    blockNumber: number
   ): Promise<void>;
 }
+
+export * from './migrations';

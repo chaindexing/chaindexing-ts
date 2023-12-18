@@ -1,4 +1,4 @@
-import { Chains, Contract } from '@chaindexing';
+import { Chains, Contract } from '@chaindexing/core';
 import { Repo } from '@chaindexing/repos';
 
 export enum ConfigErrorType {
