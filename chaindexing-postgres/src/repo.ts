@@ -1,9 +1,9 @@
 import { ContractAddress, Event, UnsavedContractAddress } from '@chaindexing/core';
 import { Repo } from '@chaindexing/repos';
+import { sql } from 'drizzle-orm';
 import { NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { chaindexingContractAddressesSchema } from './drizzle';
-import { sql } from 'drizzle-orm';
 import * as schema from './drizzle/schema';
 
 export type Conn = NodePgDatabase<typeof schema>;
@@ -53,6 +53,23 @@ export class PostgresRepo extends Repo<Pool, Conn> {
   ) {
     streamer(await conn.query.chaindexingContractAddressesSchema.findMany());
     // TODO: Implement serial streaming version
+  }
+
+  async streamContractAddresses_2(conn: Conn, limit = 10, allowOffset = true) {
+    let currentPage = 0;
+    let offset = 0;
+
+    const getNext = async (): Promise<ContractAddress[] | null> => {
+      if (allowOffset) {
+        offset = limit * currentPage;
+        currentPage += 1;
+      }
+      return conn.query.chaindexingContractAddressesSchema.findMany({ limit, offset });
+    };
+
+    return {
+      next: async () => await getNext()
+    };
   }
 
   async createEvents(_conn: Conn, _events: Event[]) {
