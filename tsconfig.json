@@ -16,6 +16,7 @@
     "paths": {
       "@chaindexing": ["chaindexing/src/index.ts"],
       "@chaindexing/core": ["chaindexing-core/src/index.ts"],
+      "@chaindexing/postgres": ["chaindexing-postgres/src/index.ts"],
       "@chaindexing/repos": ["chaindexing-repos/src/index.ts"],
       "@chaindexing/config": ["chaindexing-config/src/index.ts"],
       "@chaindexing/tests": ["chaindexing-tests/src/index.ts"]
