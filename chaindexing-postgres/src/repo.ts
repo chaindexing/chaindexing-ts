@@ -47,28 +47,19 @@ export class PostgresRepo extends Repo<Pool, Conn> {
       });
   }
 
-  async streamContractAddresses(
-    conn: Conn,
-    streamer: (contractAddresses: ContractAddress[]) => void
-  ) {
-    streamer(await conn.query.chaindexingContractAddressesSchema.findMany());
-    // TODO: Implement serial streaming version
-  }
-
-  async streamContractAddresses_2(conn: Conn, limit = 10, allowOffset = true) {
+  streamContractAddresses(conn: Conn) {
     let currentPage = 0;
     let offset = 0;
 
-    const getNext = async (): Promise<ContractAddress[] | null> => {
-      if (allowOffset) {
-        offset = limit * currentPage;
-        currentPage += 1;
-      }
-      return conn.query.chaindexingContractAddressesSchema.findMany({ limit, offset });
-    };
+    const limit = 10;
 
     return {
-      next: async () => await getNext()
+      next: async (): Promise<ContractAddress[] | null> => {
+        offset = limit * currentPage;
+        currentPage += 1;
+
+        return conn.query.chaindexingContractAddressesSchema.findMany({ limit, offset });
+      }
     };
   }
 
