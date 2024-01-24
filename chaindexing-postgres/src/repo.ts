@@ -47,11 +47,11 @@ export class PostgresRepo extends Repo<Pool, Conn> {
       });
   }
 
-  streamContractAddresses(conn: Conn) {
+  getContractAddressesStream(conn: Conn, opts?: { limit?: number }) {
     let currentPage = 0;
     let offset = 0;
 
-    const limit = 10;
+    const limit = opts?.limit || 10;
 
     return {
       next: async (): Promise<ContractAddress[] | null> => {

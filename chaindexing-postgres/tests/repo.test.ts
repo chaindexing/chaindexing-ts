@@ -1,3 +1,4 @@
+import { ContractAddress } from '@chaindexing/core';
 import { UnsavedContractAddressFactory } from '@chaindexing/tests';
 import { assert, expect } from 'chai';
 import { PostgresRepo, PostgresRepoConn, PostgresRepoMigrations } from 'chaindexing-postgres/src';
@@ -14,17 +15,14 @@ describe('Repo', async () => {
     await repo.migrate(rootConn, postgresRepoMigrations.getInternalMigrations());
   });
 
-  describe.only('createContractAddresses', async () => {
+  describe('createContractAddresses', async () => {
     it('saves unsaved contract addresses', async (conn) => {
       const unsavedContractAddresses = UnsavedContractAddressFactory.manyNew(2).toSorted();
       await repo.createContractAddresses(conn, unsavedContractAddresses);
 
-      const streamedAddresses = repo.streamContractAddresses(conn);
+      const contractAddressStream = repo.getContractAddressesStream(conn);
 
-      let contractAddresses = await streamedAddresses.next();
-      if (!contractAddresses) return;
-
-      console.log('did not return');
+      let contractAddresses = (await contractAddressStream.next()) as ContractAddress[];
 
       const contractAddressesSorted = contractAddresses.toSorted();
 
@@ -42,10 +40,9 @@ describe('Repo', async () => {
       await repo.createContractAddresses(conn, [unsaved1]);
       await repo.createContractAddresses(conn, [unsaved2]);
 
-      const streamedAddresses = repo.streamContractAddresses(conn);
+      const contractAddressStream = repo.getContractAddressesStream(conn);
 
-      let contractAddresses = await streamedAddresses.next();
-      if (!contractAddresses) return;
+      let contractAddresses = (await contractAddressStream.next()) as ContractAddress[];
 
       expect(contractAddresses).to.have.length(1);
       const [{ contractName }] = contractAddresses;
@@ -55,32 +52,30 @@ describe('Repo', async () => {
     it('does nothing for an empty list', async (conn) => {
       await repo.createContractAddresses(conn, []);
 
-      const streamedAddresses = repo.streamContractAddresses(conn);
+      const contractAddressStream = repo.getContractAddressesStream(conn);
 
-      let contractAddresses = await streamedAddresses.next();
+      let contractAddresses = await contractAddressStream.next();
 
       expect(contractAddresses).to.deep.equal([]);
     });
   });
 
-  describe('streamContractAddresses', () => {
+  describe('getContractAddressesStream', () => {
     it('returns unit list when there is just one contract address in the Repo', async (conn) => {
       const unsavedContractAddress = UnsavedContractAddressFactory.new();
       await repo.createContractAddresses(conn, [unsavedContractAddress]);
 
-      const streamedAddresses = repo.streamContractAddresses(conn);
-      let contractAddresses = await streamedAddresses.next();
-      if (!contractAddresses) return;
-
+      const contractAddressStream = repo.getContractAddressesStream(conn);
+      let contractAddresses = (await contractAddressStream.next()) as ContractAddress[];
       const [{ id, ...contractAddress }] = contractAddresses;
 
       expect(contractAddress).to.deep.equal(unsavedContractAddress);
     });
 
     it('returns an empty list when there are no contract addresses in the repo', async (conn) => {
-      const streamedAddresses = repo.streamContractAddresses(conn);
+      const contractAddressStream = repo.getContractAddressesStream(conn);
 
-      let contractAddresses = await streamedAddresses.next();
+      let contractAddresses = await contractAddressStream.next();
 
       expect(contractAddresses).to.deep.equal([]);
     });
