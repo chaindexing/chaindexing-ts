@@ -12,7 +12,10 @@ export abstract class Repo<Pool, Conn> extends Migratable<Conn> {
     conn: Conn,
     contractAddresses: UnsavedContractAddress[]
   ): Promise<void>;
-  abstract getContractAddressesStream(conn: Conn): {
+  abstract getContractAddressesStream(
+    conn: Conn,
+    opts?: { limit?: number }
+  ): {
     next: () => Promise<ContractAddress[] | null>;
   };
   abstract createEvents(conn: Conn, events: Event[]): Promise<void>;
