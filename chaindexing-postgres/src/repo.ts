@@ -3,7 +3,7 @@ import { Repo } from '@chaindexing/repos';
 import { sql } from 'drizzle-orm';
 import { NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import { chaindexingContractAddressesSchema } from './drizzle';
+import { chaindexingContractAddressesSchema, chaindexingEventsSchema } from './drizzle';
 import * as schema from './drizzle/schema';
 
 export type Conn = NodePgDatabase<typeof schema>;
@@ -63,8 +63,30 @@ export class PostgresRepo extends Repo<Pool, Conn> {
     };
   }
 
-  async createEvents(_conn: Conn, _events: Event[]) {
-    // TODO: Implement
+  async createEvents(conn: Conn, events: Event[]) {
+    if (events.length === 0) return;
+
+    await conn.insert(chaindexingEventsSchema).values(events as any);
+  }
+
+  getEventsStream(conn: Conn, opts?: { limit?: number }) {
+    let currentPage = 0;
+    let offset = 0;
+
+    const limit = opts?.limit || 10;
+
+    return {
+      next: async (): Promise<Event[] | null> => {
+        offset = limit * currentPage;
+        currentPage += 1;
+
+        const result = conn.query.chaindexingEventsSchema.findMany({
+          limit,
+          offset
+        }) as unknown as Event[];
+        return result;
+      }
+    };
   }
 
   async updateLastIngestedBlockNumber(
