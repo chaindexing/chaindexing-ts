@@ -91,12 +91,9 @@ describe('Repo', async () => {
       let events = (await eventsStream.next()) as SavedEvent[];
 
       const eventsSorted = events.toSorted();
-      console.log({ eventsSorted });
 
-      eventsSorted.forEach(({ id, insertedAt, logParams, parameters, ...event }, index) => {
-        // expect(EventFactory.isDeeplyEqual(event, newEvents[index])).to.be.true;
-        const { logParams: _l, parameters: _p, ...suppliedEvent } = newEvents[index];
-        expect(event).to.deep.equal(suppliedEvent);
+      eventsSorted.forEach(({ id, insertedAt, ...event }, index) => {
+        expect(event).to.deep.equal(newEvents[index]);
       });
     });
 

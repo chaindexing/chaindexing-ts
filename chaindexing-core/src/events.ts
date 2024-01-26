@@ -3,9 +3,9 @@ export interface Event {
   contractName: string;
   chainId: number;
   abi: string;
-  logParams: Map<string, string>;
-  parameters: Map<string, string>;
-  topics: Map<string, string>;
+  logParams: Record<string, string>;
+  parameters: Record<string, string>;
+  topics: Record<string, string>;
   blockHash: string;
   blockNumber: number;
   transactionHash: string;
