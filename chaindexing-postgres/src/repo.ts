@@ -1,5 +1,6 @@
 import { ContractAddress, Event, UnsavedContractAddress } from '@chaindexing/core';
 import { Repo } from '@chaindexing/repos';
+import { randomUUID } from 'crypto';
 import { sql } from 'drizzle-orm';
 import { NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
@@ -66,7 +67,8 @@ export class PostgresRepo extends Repo<Pool, Conn> {
   async createEvents(conn: Conn, events: Event[]) {
     if (events.length === 0) return;
 
-    await conn.insert(chaindexingEventsSchema).values(events as any);
+    const _events = events.map((e) => ({ ...e, id: randomUUID() }));
+    await conn.insert(chaindexingEventsSchema).values(_events);
   }
 
   getEventsStream(conn: Conn, opts?: { limit?: number }) {

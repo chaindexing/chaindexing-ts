@@ -1,5 +1,5 @@
-import { ContractAddress } from '@chaindexing/core';
-import { UnsavedContractAddressFactory } from '@chaindexing/tests';
+import { ContractAddress, SavedEvent } from '@chaindexing/core';
+import { EventFactory, UnsavedContractAddressFactory } from '@chaindexing/tests';
 import { assert, expect } from 'chai';
 import { PostgresRepo, PostgresRepoConn, PostgresRepoMigrations } from 'chaindexing-postgres/src';
 
@@ -76,6 +76,36 @@ describe('Repo', async () => {
       const contractAddressStream = repo.getContractAddressesStream(conn);
 
       let contractAddresses = await contractAddressStream.next();
+
+      expect(contractAddresses).to.deep.equal([]);
+    });
+  });
+
+  describe('createEvents', async () => {
+    it('saves events', async (conn) => {
+      const newEvents = EventFactory.manyNew(2).toSorted();
+      await repo.createEvents(conn, newEvents);
+
+      const eventsStream = repo.getEventsStream(conn);
+
+      let events = (await eventsStream.next()) as SavedEvent[];
+
+      const eventsSorted = events.toSorted();
+      console.log({ eventsSorted });
+
+      eventsSorted.forEach(({ id, insertedAt, logParams, parameters, ...event }, index) => {
+        // expect(EventFactory.isDeeplyEqual(event, newEvents[index])).to.be.true;
+        const { logParams: _l, parameters: _p, ...suppliedEvent } = newEvents[index];
+        expect(event).to.deep.equal(suppliedEvent);
+      });
+    });
+
+    it('does nothing for an empty list', async (conn) => {
+      await repo.createEvents(conn, []);
+
+      const eventsStream = repo.getEventsStream(conn);
+
+      let contractAddresses = await eventsStream.next();
 
       expect(contractAddresses).to.deep.equal([]);
     });

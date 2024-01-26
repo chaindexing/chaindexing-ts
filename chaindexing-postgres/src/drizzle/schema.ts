@@ -1,11 +1,11 @@
 import {
   boolean,
-  date,
   integer,
-  json,
+  jsonb,
   pgTable,
   serial,
   text,
+  timestamp,
   uniqueIndex,
   uuid
 } from 'drizzle-orm/pg-core';
@@ -29,18 +29,20 @@ export const chaindexingContractAddressesSchema = pgTable(
 );
 
 export const chaindexingEventsSchema = pgTable('chaindexing_events', {
-  id: uuid('id').primaryKey(),
+  id: uuid('id').defaultRandom().primaryKey(),
   contractAddress: text('contract_address').notNull(),
   contractName: text('contract_name').notNull(),
+  chainId: integer('chain_id').notNull(),
   abi: text('abi').notNull(),
-  logParams: json('log_params').notNull(),
-  parameters: json('parameters').notNull(),
-  topics: json('topics').notNull(),
-  blockHash: json('block_hash').notNull(),
+  logParams: jsonb('log_params').notNull().$type<Map<string, string>>(),
+  parameters: jsonb('parameters').notNull().$type<Map<string, string>>(),
+  topics: jsonb('topics').notNull().$type<Map<string, string>>(),
+  blockHash: text('block_hash').notNull(),
   blockNumber: integer('block_number').notNull(),
-  transactionHash: json('transaction_hash').notNull(),
+  blockTimestamp: integer('block_timestamp').notNull(),
+  transactionHash: text('transaction_hash').notNull(),
   transactionIndex: integer('transaction_index').notNull(),
   logIndex: integer('log_index').notNull(),
   removed: boolean('removed').notNull(),
-  insertedAt: date('inserted_at').notNull()
+  insertedAt: timestamp('inserted_at', { withTimezone: true }).notNull().defaultNow()
 });
