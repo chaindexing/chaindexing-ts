@@ -1,4 +1,4 @@
-import { Chains, Contract } from '@chaindexing/core';
+import { Chain, Chains, Contract, JsonRpcUrl } from '@chaindexing/core';
 import { Repo } from '@chaindexing/repos';
 
 export enum ConfigErrorType {
@@ -28,6 +28,8 @@ export class Config<Pool, Conn, R extends Repo<Pool, Conn>> {
   public blocksPerBatch = 20;
   public handlerRateMs = 10000;
   public ingestionRateMs = 10000;
+  public resetCount = 0;
+  public minConfirmationCount = 0;
 
   constructor(private readonly repo: R) {}
 
@@ -45,6 +47,30 @@ export class Config<Pool, Conn, R extends Repo<Pool, Conn>> {
 
   withIngestionIntervalMs(ingestionRateMs: number): Config<Pool, Conn, R> {
     this.ingestionRateMs = ingestionRateMs;
+
+    return this;
+  }
+
+  addChain(chain: Chain, jsonRpcUrl: JsonRpcUrl): Config<Pool, Conn, R> {
+    this.chains.set(chain, jsonRpcUrl);
+
+    return this;
+  }
+
+  addContract(contract: Contract): Config<Pool, Conn, R> {
+    this.contracts.push(contract);
+
+    return this;
+  }
+
+  withMinConfirmationCount(minConfirmationCount: number): Config<Pool, Conn, R> {
+    this.minConfirmationCount = minConfirmationCount;
+
+    return this;
+  }
+
+  reset(count: number) {
+    this.resetCount = count;
 
     return this;
   }
