@@ -28,7 +28,7 @@ export class UnsavedContractAddressFactory {
 
 export class EventFactory {
   static manyNew(size: number): Event[] {
-    return new Array(size).fill(null).map((_, index) => this.new(index));
+    return manyNew(size, this.new);
   }
   static new(index = 0): Event {
     return {
@@ -49,11 +49,6 @@ export class EventFactory {
       blockTimestamp: getRandomInteger(2000000),
       removed: false
     };
-  }
-
-  static isDeeplyEqual() {
-    const excludedField = ['insertedAt'];
-    return true;
   }
 }
 

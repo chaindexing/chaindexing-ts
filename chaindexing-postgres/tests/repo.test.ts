@@ -1,4 +1,4 @@
-import { ContractAddress, SavedEvent } from '@chaindexing/core';
+import { ContractAddress, Event } from '@chaindexing/core';
 import { EventFactory, UnsavedContractAddressFactory } from '@chaindexing/tests';
 import { assert, expect } from 'chai';
 import { PostgresRepo, PostgresRepoConn, PostgresRepoMigrations } from 'chaindexing-postgres/src';
@@ -88,7 +88,7 @@ describe('Repo', async () => {
 
       const eventsStream = repo.getEventsStream(conn);
 
-      let events = (await eventsStream.next()) as SavedEvent[];
+      let events = (await eventsStream.next()) as Event[];
 
       const eventsSorted = events.toSorted();
 

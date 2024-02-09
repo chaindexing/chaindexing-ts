@@ -1,4 +1,4 @@
-export interface Event {
+export interface UnsavedEvent {
   contractAddress: string;
   contractName: string;
   chainId: number;
@@ -15,7 +15,7 @@ export interface Event {
   removed: boolean;
 }
 
-export interface SavedEvent extends Event {
-  id: number;
-  insertedAt: Date;
+export interface Event extends UnsavedEvent {
+  id?: number;
+  insertedAt?: Date;
 }

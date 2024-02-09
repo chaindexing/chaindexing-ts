@@ -55,7 +55,7 @@ export class PostgresRepo extends Repo<Pool, Conn> {
     const limit = opts?.limit || 10;
 
     return {
-      next: async (): Promise<ContractAddress[] | null> => {
+      next: async (): Promise<ContractAddress[]> => {
         offset = limit * currentPage;
         currentPage += 1;
 
@@ -78,7 +78,7 @@ export class PostgresRepo extends Repo<Pool, Conn> {
     const limit = opts?.limit || 10;
 
     return {
-      next: async (): Promise<Event[] | null> => {
+      next: async (): Promise<Event[]> => {
         offset = limit * currentPage;
         currentPage += 1;
 
