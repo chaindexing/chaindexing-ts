@@ -16,6 +16,6 @@ export interface UnsavedEvent {
 }
 
 export interface Event extends UnsavedEvent {
-  id?: number;
+  id?: string;
   insertedAt?: Date;
 }

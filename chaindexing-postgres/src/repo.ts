@@ -85,7 +85,7 @@ export class PostgresRepo extends Repo<Pool, Conn> {
         const result = conn.query.chaindexingEventsSchema.findMany({
           limit,
           offset
-        }) as unknown as Event[];
+        });
         return result;
       }
     };
