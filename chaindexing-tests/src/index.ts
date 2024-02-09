@@ -1,4 +1,4 @@
-import { Event, UnsavedContractAddress } from '@chaindexing/core';
+import { UnsavedContractAddress, UnsavedEvent } from '@chaindexing/core';
 
 // Export global test modules
 export class UnsavedContractAddressFactory {
@@ -27,10 +27,10 @@ export class UnsavedContractAddressFactory {
 }
 
 export class EventFactory {
-  static manyNew(size: number): Event[] {
+  static manyNew(size: number): UnsavedEvent[] {
     return manyNew(size, this.new);
   }
-  static new(index = 0): Event {
+  static new(index = 0): UnsavedEvent {
     return {
       contractAddress: `0xBC4CA0EdA7647A8aB7C2061c2E118A18a93${index}f${getRandomInteger(
         9

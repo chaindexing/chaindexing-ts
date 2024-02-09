@@ -1,4 +1,5 @@
-export interface UnsavedEvent {
+export interface Event {
+  id: string;
   contractAddress: string;
   contractName: string;
   chainId: number;
@@ -13,9 +14,7 @@ export interface UnsavedEvent {
   logIndex: number;
   blockTimestamp: number;
   removed: boolean;
+  insertedAt: Date;
 }
 
-export interface Event extends UnsavedEvent {
-  id?: string;
-  insertedAt?: Date;
-}
+export interface UnsavedEvent extends Omit<Event, 'id' | 'insertedAt'> {}

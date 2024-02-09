@@ -1,4 +1,4 @@
-import { ContractAddress, Event, UnsavedContractAddress } from '@chaindexing/core';
+import { ContractAddress, Event, UnsavedContractAddress, UnsavedEvent } from '@chaindexing/core';
 import { Repo } from '@chaindexing/repos';
 import { randomUUID } from 'crypto';
 import { sql } from 'drizzle-orm';
@@ -64,7 +64,7 @@ export class PostgresRepo extends Repo<Pool, Conn> {
     };
   }
 
-  async createEvents(conn: Conn, events: Event[]) {
+  async createEvents(conn: Conn, events: UnsavedEvent[]) {
     if (events.length === 0) return;
 
     const _events = events.map((e) => ({ ...e, id: randomUUID() }));
