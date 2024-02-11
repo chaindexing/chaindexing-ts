@@ -1,6 +1,7 @@
+import { ContractAddress, Event } from '@chaindexing/core';
+import { EventFactory, UnsavedContractAddressFactory } from '@chaindexing/tests';
 import { assert, expect } from 'chai';
 import { PostgresRepo, PostgresRepoConn, PostgresRepoMigrations } from 'chaindexing-postgres/src';
-import { UnsavedContractAddressFactory } from '@chaindexing/tests';
 
 describe('Repo', async () => {
   const repo = new PostgresRepo('postgres://postgres:postgres@localhost:5432/chaindexing_db');
@@ -19,14 +20,17 @@ describe('Repo', async () => {
       const unsavedContractAddresses = UnsavedContractAddressFactory.manyNew(2).toSorted();
       await repo.createContractAddresses(conn, unsavedContractAddresses);
 
-      await repo.streamContractAddresses(conn, (contractAddresses) => {
-        const contractAddressesSorted = contractAddresses.toSorted();
+      const contractAddressStream = repo.getContractAddressesStream(conn);
 
-        contractAddressesSorted.forEach(({ id, ...contractAddress }, index) => {
-          expect(contractAddress).to.deep.equal(unsavedContractAddresses[index]);
-        });
+      let contractAddresses = (await contractAddressStream.next()) as ContractAddress[];
+
+      const contractAddressesSorted = contractAddresses.toSorted();
+
+      contractAddressesSorted.forEach(({ id, ...contractAddress }, index) => {
+        expect(contractAddress).to.deep.equal(unsavedContractAddresses[index]);
       });
     });
+
     it('updates contract name when there is a conflict', async (conn) => {
       const unsavedContractAddresses = UnsavedContractAddressFactory.manyNewConflicting(2);
       const [unsaved1, unsaved2] = unsavedContractAddresses;
@@ -36,36 +40,71 @@ describe('Repo', async () => {
       await repo.createContractAddresses(conn, [unsaved1]);
       await repo.createContractAddresses(conn, [unsaved2]);
 
-      await repo.streamContractAddresses(conn, (contractAddresses) => {
-        expect(contractAddresses).to.have.length(1);
-        const [{ contractName }] = contractAddresses;
-        expect(contractName).to.equal(unsaved2.contractName);
-      });
+      const contractAddressStream = repo.getContractAddressesStream(conn);
+
+      let contractAddresses = (await contractAddressStream.next()) as ContractAddress[];
+
+      expect(contractAddresses).to.have.length(1);
+      const [{ contractName }] = contractAddresses;
+      expect(contractName).to.equal(unsaved2.contractName);
     });
 
     it('does nothing for an empty list', async (conn) => {
       await repo.createContractAddresses(conn, []);
 
-      await repo.streamContractAddresses(conn, (contractAddresses) => {
-        expect(contractAddresses).to.deep.equal([]);
-      });
+      const contractAddressStream = repo.getContractAddressesStream(conn);
+
+      let contractAddresses = await contractAddressStream.next();
+
+      expect(contractAddresses).to.deep.equal([]);
     });
   });
 
-  describe('streamContractAddresses', () => {
+  describe('getContractAddressesStream', () => {
     it('returns unit list when there is just one contract address in the Repo', async (conn) => {
       const unsavedContractAddress = UnsavedContractAddressFactory.new();
       await repo.createContractAddresses(conn, [unsavedContractAddress]);
 
-      await repo.streamContractAddresses(conn, ([{ id, ...contractAddress }]) => {
-        expect(contractAddress).to.deep.equal(unsavedContractAddress);
-      });
+      const contractAddressStream = repo.getContractAddressesStream(conn);
+      let contractAddresses = (await contractAddressStream.next()) as ContractAddress[];
+      const [{ id, ...contractAddress }] = contractAddresses;
+
+      expect(contractAddress).to.deep.equal(unsavedContractAddress);
     });
 
     it('returns an empty list when there are no contract addresses in the repo', async (conn) => {
-      await repo.streamContractAddresses(conn, (contractAddresses) => {
-        expect(contractAddresses).to.deep.equal([]);
+      const contractAddressStream = repo.getContractAddressesStream(conn);
+
+      let contractAddresses = await contractAddressStream.next();
+
+      expect(contractAddresses).to.deep.equal([]);
+    });
+  });
+
+  describe('createEvents', async () => {
+    it('saves events', async (conn) => {
+      const newEvents = EventFactory.manyNew(2).toSorted();
+      await repo.createEvents(conn, newEvents);
+
+      const eventsStream = repo.getEventsStream(conn);
+
+      let events = (await eventsStream.next()) as Event[];
+
+      const eventsSorted = events.toSorted();
+
+      eventsSorted.forEach(({ id, insertedAt, ...event }, index) => {
+        expect(event).to.deep.equal(newEvents[index]);
       });
+    });
+
+    it('does nothing for an empty list', async (conn) => {
+      await repo.createEvents(conn, []);
+
+      const eventsStream = repo.getEventsStream(conn);
+
+      let contractAddresses = await eventsStream.next();
+
+      expect(contractAddresses).to.deep.equal([]);
     });
   });
 });

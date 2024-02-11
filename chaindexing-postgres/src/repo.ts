@@ -1,9 +1,10 @@
-import { ContractAddress, Event, UnsavedContractAddress } from '@chaindexing/core';
+import { ContractAddress, Event, UnsavedContractAddress, UnsavedEvent } from '@chaindexing/core';
 import { Repo } from '@chaindexing/repos';
+import { randomUUID } from 'crypto';
+import { sql } from 'drizzle-orm';
 import { NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import { chaindexingContractAddressesSchema } from './drizzle';
-import { sql } from 'drizzle-orm';
+import { chaindexingContractAddressesSchema, chaindexingEventsSchema } from './drizzle';
 import * as schema from './drizzle/schema';
 
 export type Conn = NodePgDatabase<typeof schema>;
@@ -47,16 +48,47 @@ export class PostgresRepo extends Repo<Pool, Conn> {
       });
   }
 
-  async streamContractAddresses(
-    conn: Conn,
-    streamer: (contractAddresses: ContractAddress[]) => void
-  ) {
-    streamer(await conn.query.chaindexingContractAddressesSchema.findMany());
-    // TODO: Implement serial streaming version
+  getContractAddressesStream(conn: Conn, opts?: { limit?: number }) {
+    let currentPage = 0;
+    let offset = 0;
+
+    const limit = opts?.limit || 10;
+
+    return {
+      next: async (): Promise<ContractAddress[]> => {
+        offset = limit * currentPage;
+        currentPage += 1;
+
+        return conn.query.chaindexingContractAddressesSchema.findMany({ limit, offset });
+      }
+    };
   }
 
-  async createEvents(_conn: Conn, _events: Event[]) {
-    // TODO: Implement
+  async createEvents(conn: Conn, events: UnsavedEvent[]) {
+    if (events.length === 0) return;
+
+    const _events = events.map((e) => ({ ...e, id: randomUUID() }));
+    await conn.insert(chaindexingEventsSchema).values(_events);
+  }
+
+  getEventsStream(conn: Conn, opts?: { limit?: number }) {
+    let currentPage = 0;
+    let offset = 0;
+
+    const limit = opts?.limit || 10;
+
+    return {
+      next: async (): Promise<Event[]> => {
+        offset = limit * currentPage;
+        currentPage += 1;
+
+        const result = conn.query.chaindexingEventsSchema.findMany({
+          limit,
+          offset
+        });
+        return result;
+      }
+    };
   }
 
   async updateLastIngestedBlockNumber(

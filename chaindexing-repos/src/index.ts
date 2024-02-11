@@ -1,4 +1,4 @@
-import { ContractAddress, Event, UnsavedContractAddress } from '@chaindexing/core';
+import { ContractAddress, Event, UnsavedContractAddress, UnsavedEvent } from '@chaindexing/core';
 import { Migratable } from './migrations';
 
 export abstract class Repo<Pool, Conn> extends Migratable<Conn> {
@@ -12,11 +12,19 @@ export abstract class Repo<Pool, Conn> extends Migratable<Conn> {
     conn: Conn,
     contractAddresses: UnsavedContractAddress[]
   ): Promise<void>;
-  abstract streamContractAddresses(
+  abstract getContractAddressesStream(
     conn: Conn,
-    streamer: (contractAddresses: ContractAddress[]) => Promise<void>
-  ): Promise<void>;
-  abstract createEvents(conn: Conn, events: Event[]): Promise<void>;
+    opts?: { limit?: number }
+  ): {
+    next: () => Promise<ContractAddress[]>;
+  };
+  abstract createEvents(conn: Conn, events: UnsavedEvent[]): Promise<void>;
+  abstract getEventsStream(
+    conn: Conn,
+    opts?: { limit?: number }
+  ): {
+    next: () => Promise<Event[]>;
+  };
   abstract updateLastIngestedBlockNumber(
     conn: Conn,
     contractAddresses: ContractAddress[],

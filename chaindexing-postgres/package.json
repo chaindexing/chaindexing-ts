@@ -10,7 +10,7 @@
     "start": "ts-node src",
     "build": "tsc",
     "build:watch": "tsc -w",
-    "test": "mocha tests/**/*.test.ts"
+    "test": "mocha --require ts-node/register tests/**/*.test.ts"
   },
   "dependencies": {
     "drizzle-orm": "^0.29.1",

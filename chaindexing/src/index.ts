@@ -2,9 +2,10 @@ import { Config } from '@chaindexing/config';
 import { Repo } from '@chaindexing/repos';
 
 export async function indexStates<Pool, Conn, UserRepo extends Repo<Pool, Conn>>(
-  _config: Config<Pool, Conn, UserRepo>
+  config: Config<Pool, Conn, UserRepo>
 ) {
   // TODO
+  config.validate();
   await setup();
 }
 
