@@ -1,5 +1,5 @@
 import { ContractAddress, Event, UnsavedContractAddress, UnsavedEvent } from '@chaindexing/core';
-import { Repo } from '@chaindexing/repos';
+import { Repo, SQLikeMigrations } from '@chaindexing/repos';
 import { randomUUID } from 'crypto';
 import { sql } from 'drizzle-orm';
 import { NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
@@ -97,5 +97,22 @@ export class PostgresRepo extends Repo<Pool, Conn> {
     _blockNumber: number
   ) {
     // TODO: Implement
+  }
+
+  // Implement migration methods
+  create_contract_addresses_migration(): string[] {
+    return SQLikeMigrations.create_contract_addresses();
+  }
+
+  drop_contract_addresses_migration(): string[] {
+    return SQLikeMigrations.drop_contract_addresses();
+  }
+
+  create_events_migration(): string[] {
+    return SQLikeMigrations.create_events();
+  }
+
+  drop_events_migration(): string[] {
+    return SQLikeMigrations.drop_events();
   }
 }
