@@ -2,7 +2,7 @@ import { Provider, RawLog, Block, LogFilter } from '@chaindexing/core';
 import { getRandomInteger } from './contracts';
 
 export class EmptyProvider implements Provider {
-  async fetchLogs(filters: LogFilter[]): Promise<RawLog[]> {
+  async fetchLogs(_filters: LogFilter[]): Promise<RawLog[]> {
     return [];
   }
 
@@ -30,7 +30,7 @@ export class MockProviderWithLogs implements Provider {
     private currentBlockNumber: number = 17774490
   ) {}
 
-  async fetchLogs(filters: LogFilter[]): Promise<RawLog[]> {
+  async fetchLogs(_filters: LogFilter[]): Promise<RawLog[]> {
     return [this.createTransferLog()];
   }
 
@@ -86,7 +86,7 @@ export class MockProviderWithFilter implements Provider {
     return [];
   }
 
-  async fetchBlocksByNumber(blockNumbers: number[]): Promise<Map<number, Block>> {
+  async fetchBlocksByNumber(_blockNumbers: number[]): Promise<Map<number, Block>> {
     return new Map();
   }
 

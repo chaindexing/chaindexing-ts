@@ -3,11 +3,12 @@ import { Chain, createContract, Contract } from '@chaindexing/core';
 export const BAYC_CONTRACT_ADDRESS = '0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D';
 export const BAYC_CONTRACT_START_BLOCK_NUMBER = 17773490;
 
-export function baycContract<SharedState = any>(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function baycContract<_SharedState = any>(
   name: string,
   twoDigitNonce: string
-): Contract<SharedState> {
-  return createContract<SharedState>(name)
+): Contract<_SharedState> {
+  return createContract<_SharedState>(name)
     .addAddress(
       `0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f${twoDigitNonce}D`,
       Chain.Mainnet,

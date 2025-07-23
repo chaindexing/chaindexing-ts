@@ -1,6 +1,5 @@
 import { Event, UnsavedEvent, Chain, Contract } from '@chaindexing/core';
-import { getRandomInteger } from './contracts';
-import { BAYC_CONTRACT_ADDRESS } from './contracts';
+import { getRandomInteger, BAYC_CONTRACT_ADDRESS } from './contracts';
 
 export class EventFactory {
   static manyNew(size: number): UnsavedEvent[] {
@@ -37,6 +36,7 @@ export class EventFactory {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function transferEventWithContract(contract: Contract<any>): Event {
   const contractAddress = BAYC_CONTRACT_ADDRESS;
 

@@ -5,7 +5,7 @@ export interface Event {
   chainId: number;
   abi: string;
   logParams: Record<string, string>;
-  parameters: Record<string, any>;
+  parameters: Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
   topics: Record<string, string>;
   blockHash: string;
   blockNumber: number;
@@ -28,11 +28,12 @@ export interface EventParams {
   getBigInt(paramName: string): bigint;
   getString(paramName: string): string;
   getBoolean(paramName: string): boolean;
-  getRaw(paramName: string): any;
+  getRaw(paramName: string): any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 // Implementation of EventParams
 export class EventParamsImpl implements EventParams {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(private parameters: Record<string, any>) {}
 
   getAddress(paramName: string): string {
@@ -125,6 +126,7 @@ export class EventParamsImpl implements EventParams {
     throw new Error(`Parameter ${paramName} is not a valid boolean`);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getRaw(paramName: string): any {
     return this.parameters[paramName];
   }

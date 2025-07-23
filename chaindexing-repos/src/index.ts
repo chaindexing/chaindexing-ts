@@ -1,5 +1,5 @@
 import { ContractAddress, Event, UnsavedContractAddress, UnsavedEvent } from '@chaindexing/core';
-import { Migratable, RepoMigrations } from './migrations';
+import { Migratable } from './migrations';
 
 export abstract class Repo<Pool, Conn> extends Migratable<Conn> {
   abstract getPool(maxSize: number): Promise<Pool>;

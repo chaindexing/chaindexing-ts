@@ -63,12 +63,15 @@ class TransferHandler implements PureHandler {
     // For now, we'll create a new NFT or update existing one
     if (from === '0x0000000000000000000000000000000000000000') {
       // Mint: create new NFT
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const newNft = new Nft(tokenId, to);
       console.log(`Minted NFT ${tokenId} to ${to}`);
       // In real implementation: await newNft.create(context);
     } else {
       // Transfer: update existing NFT
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const existingNft = new Nft(tokenId, from);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const updates = createUpdates('owner_address', to);
       console.log(`Transferred NFT ${tokenId} from ${from} to ${to}`);
       // In real implementation: await existingNft.update(updates, context);

@@ -26,7 +26,7 @@ describe('Repo', async () => {
 
       const contractAddressesSorted = contractAddresses.toSorted();
 
-      contractAddressesSorted.forEach(({ id, ...contractAddress }, index) => {
+      contractAddressesSorted.forEach(({ id: _id, ...contractAddress }, index) => {
         expect(contractAddress).to.deep.equal(unsavedContractAddresses[index]);
       });
     });
@@ -67,7 +67,8 @@ describe('Repo', async () => {
 
       const contractAddressStream = repo.getContractAddressesStream(conn);
       const contractAddresses = (await contractAddressStream.next()) as ContractAddress[];
-      const [{ id, ...contractAddress }] = contractAddresses;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const [{ id: _id, ...contractAddress }] = contractAddresses;
 
       expect(contractAddress).to.deep.equal(unsavedContractAddress);
     });
@@ -92,7 +93,7 @@ describe('Repo', async () => {
 
       const eventsSorted = events.toSorted();
 
-      eventsSorted.forEach(({ id, insertedAt, ...event }, index) => {
+      eventsSorted.forEach(({ id: _id, insertedAt: _insertedAt, ...event }, index) => {
         expect(event).to.deep.equal(newEvents[index]);
       });
     });

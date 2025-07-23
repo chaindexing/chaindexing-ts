@@ -1,5 +1,6 @@
 import { Chain } from './chains';
-import { Event, UnsavedEvent } from './events';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { UnsavedEvent } from './events';
 
 // Web3 Provider interface for fetching blockchain data
 export interface Provider {
@@ -100,10 +101,10 @@ export class EventIngesterImpl implements EventIngester {
       const parameters = this.parseLogParameters(log);
 
       return {
+        chainId: this.chainId,
         contractAddress: log.address,
         contractName: this.getContractName(log.address, contractAddresses),
-        chainId: this.chainId,
-        abi: this.inferAbi(log), // This would need proper ABI inference
+        abi: this.inferAbi(log),
         logParams: this.parseLogParams(log),
         parameters,
         topics: this.parseTopics(log.topics),
@@ -120,41 +121,49 @@ export class EventIngesterImpl implements EventIngester {
     return events;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private parseLogParameters(log: RawLog): Record<string, any> {
-    // This is a placeholder implementation
-    // Real implementation would decode log data using ABI
-    return {
-      rawData: log.data,
-      rawTopics: log.topics,
-    };
+    const params = this.parseLogParams(log);
+    const topics = this.parseTopics(log.topics);
+    return { ...params, ...topics };
   }
 
   private parseLogParams(log: RawLog): Record<string, string> {
-    // This is a placeholder implementation
+    // Simplified parameter parsing - real implementation would use ABI
     return {
       data: log.data,
-      topics: log.topics.join(','),
     };
   }
 
   private parseTopics(topics: string[]): Record<string, string> {
-    const result: Record<string, string> = {};
-    topics.forEach((topic, index) => {
-      result[`topic${index}`] = topic;
-    });
-    return result;
+    // Simplified topic parsing - real implementation would use ABI
+    return topics.reduce(
+      (acc, topic, index) => {
+        acc[`topic${index}`] = topic;
+        return acc;
+      },
+      {} as Record<string, string>
+    );
   }
 
-  private getContractName(address: string, contractAddresses: string[]): string {
-    // This would need to be mapped from the contract configuration
-    // For now, return a placeholder
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private getContractName(address: string, _contractAddresses: string[]): string {
+    // Simplified contract name resolution
     return `Contract_${address.slice(0, 8)}`;
   }
 
-  private inferAbi(log: RawLog): string {
-    // This would need proper ABI inference based on event signatures
-    // For now, return a placeholder
-    return `event Unknown()`;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private inferAbi(_log: RawLog): string {
+    // Simplified ABI inference - real implementation would use contract metadata
+    return '[]';
+  }
+
+  private inferEventName(log: RawLog): string {
+    // Simplified event name inference from first topic
+    if (log.topics.length > 0) {
+      return `Event_${log.topics[0].slice(0, 8)}`;
+    }
+    return 'UnknownEvent';
   }
 }
 
@@ -163,7 +172,7 @@ export class JsonRpcProvider implements Provider {
   constructor(private rpcUrl: string) {}
 
   async fetchLogs(filters: LogFilter[]): Promise<RawLog[]> {
-    const allLogs: RawLog[] = [];
+    const results: RawLog[] = [];
 
     for (const filter of filters) {
       const params = {
@@ -173,71 +182,66 @@ export class JsonRpcProvider implements Provider {
         toBlock: `0x${filter.toBlock.toString(16)}`,
       };
 
-      const response = await this.jsonRpcCall('eth_getLogs', [params]);
-      const logs = response.result || [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- JSON-RPC response can be any type
+      const response = (await this.jsonRpcCall('eth_getLogs', [params])) as any;
 
-      const parsedLogs: RawLog[] = logs.map((log: any) => ({
-        address: log.address,
-        topics: log.topics || [],
-        data: log.data || '0x',
-        blockNumber: parseInt(log.blockNumber, 16),
-        blockHash: log.blockHash,
-        transactionHash: log.transactionHash,
-        transactionIndex: parseInt(log.transactionIndex, 16),
-        logIndex: parseInt(log.logIndex, 16),
-        removed: log.removed || false,
-      }));
-
-      allLogs.push(...parsedLogs);
+      if (response && Array.isArray(response)) {
+        const logs: RawLog[] = response.map((log: any) => ({
+          // eslint-disable-line @typescript-eslint/no-explicit-any -- JSON-RPC log can be any type
+          address: log.address,
+          topics: log.topics,
+          data: log.data,
+          blockNumber: parseInt(log.blockNumber, 16),
+          blockHash: log.blockHash,
+          transactionHash: log.transactionHash,
+          transactionIndex: parseInt(log.transactionIndex, 16),
+          logIndex: parseInt(log.logIndex, 16),
+          removed: log.removed || false,
+        }));
+        results.push(...logs);
+      }
     }
 
-    return allLogs;
+    return results;
   }
 
   async fetchBlocksByNumber(blockNumbers: number[]): Promise<Map<number, Block>> {
-    const blockMap = new Map<number, Block>();
+    const blocks = new Map<number, Block>();
 
     for (const blockNumber of blockNumbers) {
-      const response = await this.jsonRpcCall('eth_getBlockByNumber', [
-        `0x${blockNumber.toString(16)}`,
-        false,
-      ]);
+      const params = [`0x${blockNumber.toString(16)}`, false];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- JSON-RPC response can be any type
+      const response = (await this.jsonRpcCall('eth_getBlockByNumber', params)) as any;
 
-      if (response.result) {
-        const block = response.result;
-        blockMap.set(blockNumber, {
-          number: parseInt(block.number, 16),
-          hash: block.hash,
-          timestamp: parseInt(block.timestamp, 16),
-          parentHash: block.parentHash,
+      if (response) {
+        blocks.set(blockNumber, {
+          number: parseInt(response.number, 16),
+          hash: response.hash,
+          timestamp: parseInt(response.timestamp, 16),
+          parentHash: response.parentHash,
         });
       }
     }
 
-    return blockMap;
+    return blocks;
   }
 
   async getCurrentBlockNumber(): Promise<number> {
-    const response = await this.jsonRpcCall('eth_blockNumber', []);
-    return parseInt(response.result, 16);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- JSON-RPC response can be any type
+    const response = (await this.jsonRpcCall('eth_blockNumber', [])) as any;
+    return parseInt(response, 16);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- JSON-RPC parameters and response can be any type
   private async jsonRpcCall(method: string, params: any[]): Promise<any> {
-    // Use global fetch if available, otherwise would need to import node-fetch
-    const fetchFn = globalThis.fetch || (global as any).fetch;
-
-    if (!fetchFn) {
-      throw new Error('Fetch is not available. Please use Node.js 18+ or install node-fetch');
-    }
-
-    const response = await fetchFn(this.rpcUrl, {
+    const response = await fetch(this.rpcUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         jsonrpc: '2.0',
-        id: Date.now(),
+        id: 1,
         method,
         params,
       }),
@@ -247,22 +251,22 @@ export class JsonRpcProvider implements Provider {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data: any = await response.json();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- JSON-RPC response can be any type
+    const data = (await response.json()) as any;
 
     if (data.error) {
       throw new Error(`JSON-RPC error: ${data.error.message}`);
     }
 
-    return data;
+    return data.result;
   }
 }
 
-// Helper function to create a provider
+// Factory functions
 export function createProvider(rpcUrl: string): Provider {
   return new JsonRpcProvider(rpcUrl);
 }
 
-// Helper function to create an event ingester
 export function createEventIngester(provider: Provider, chainId: Chain): EventIngester {
   return new EventIngesterImpl(provider, chainId);
 }

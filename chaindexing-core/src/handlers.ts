@@ -9,12 +9,13 @@ export interface HandlerContext {
 // Pure Handler Context - for deterministic state indexing
 export interface PureHandlerContext extends HandlerContext {
   // Repository client for database operations within transactions
-  repoClient: any; // Will be typed properly when repo integration is complete
+  repoClient: any; // eslint-disable-line @typescript-eslint/no-explicit-any -- Will be typed properly when repo integration is complete
 }
 
 // Side Effect Handler Context - for non-deterministic operations
 export interface SideEffectHandlerContext<SharedState = any> extends HandlerContext {
-  repoClient: any;
+  // eslint-disable-line @typescript-eslint/no-explicit-any -- Generic type parameter for shared state
+  repoClient: any; // eslint-disable-line @typescript-eslint/no-explicit-any -- Will be typed properly when repo integration is complete
   getSharedState(): Promise<SharedState>;
 }
 
@@ -30,6 +31,7 @@ export interface PureHandler {
 
 // Side Effect Handler interface for non-deterministic operations
 export interface SideEffectHandler<SharedState = any> {
+  // eslint-disable-line @typescript-eslint/no-explicit-any -- Generic type parameter for shared state
   abi(): string;
   handleEvent(context: SideEffectHandlerContext<SharedState>): Promise<void>;
 }
@@ -39,6 +41,7 @@ export type EventAbi = string;
 
 // Implementation of PureHandlerContext
 export class PureHandlerContextImpl implements PureHandlerContext {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Will be typed properly when repo integration is complete
   constructor(
     public event: Event,
     public repoClient: any
@@ -50,12 +53,13 @@ export class PureHandlerContextImpl implements PureHandlerContext {
 }
 
 // Implementation of SideEffectHandlerContext
-export class SideEffectHandlerContextImpl<SharedState = any>
+export class SideEffectHandlerContextImpl<SharedState = any> // eslint-disable-line @typescript-eslint/no-explicit-any -- Generic type parameter for shared state
   implements SideEffectHandlerContext<SharedState>
 {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Will be typed properly when repo integration is complete
   constructor(
     public event: Event,
-    public repoClient: any,
+    public repoClient: any, // eslint-disable-line @typescript-eslint/no-explicit-any -- Will be typed properly when repo integration is complete
     private sharedState?: SharedState
   ) {}
 
@@ -72,13 +76,15 @@ export class SideEffectHandlerContextImpl<SharedState = any>
 }
 
 // Helper functions to create contexts
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Will be typed properly when repo integration is complete
 export function createPureHandlerContext(event: Event, repoClient: any): PureHandlerContext {
   return new PureHandlerContextImpl(event, repoClient);
 }
 
-export function createSideEffectHandlerContext<SharedState = any>(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Generic type parameter for shared state
+export function createSideEffectHandlerContext<SharedState = any>( // eslint-disable-line @typescript-eslint/no-explicit-any -- Generic type parameter for shared state
   event: Event,
-  repoClient: any,
+  repoClient: any, // eslint-disable-line @typescript-eslint/no-explicit-any -- Will be typed properly when repo integration is complete
   sharedState?: SharedState
 ): SideEffectHandlerContext<SharedState> {
   return new SideEffectHandlerContextImpl(event, repoClient, sharedState);

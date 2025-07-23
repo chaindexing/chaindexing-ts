@@ -22,6 +22,7 @@ class ConfigError extends Error {
 }
 
 export class Config<Pool, Conn, R extends Repo<Pool, Conn>, SharedState = any> {
+  // eslint-disable-line @typescript-eslint/no-explicit-any -- Generic type parameter for shared state
   public chains: Chains = new Map();
   public contracts: Contract<SharedState>[] = [];
 

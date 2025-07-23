@@ -53,6 +53,7 @@ export class TestRunner {
       await TestDatabase.truncateAllTables(pool);
 
       // Add execute method to conn for state operations
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (conn as any).execute = async (query: string, params: any[] = []) => {
         const client = await pool.connect();
         try {
@@ -60,6 +61,19 @@ export class TestRunner {
         } finally {
           client.release();
         }
+      };
+
+      // Add execute method to repoClient for state operations
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (conn as any).repoClient = {
+        execute: async (query: string, params: any[] = []) => {
+          const client = await pool.connect();
+          try {
+            return await client.query(query, params);
+          } finally {
+            client.release();
+          }
+        },
       };
 
       return await testFn(repo, conn);

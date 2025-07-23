@@ -1,16 +1,11 @@
-import {
-  PureHandler,
-  SideEffectHandler,
-  PureHandlerContext,
-  SideEffectHandlerContext,
-} from '@chaindexing/core';
+import { PureHandler, SideEffectHandler, SideEffectHandlerContext } from '@chaindexing/core';
 
 export class TransferTestHandler implements PureHandler {
   abi(): string {
     return 'event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)';
   }
 
-  async handleEvent(context: PureHandlerContext): Promise<void> {
+  async handleEvent(_context: any): Promise<void> {
     // Test handler - does nothing for now
     // In real tests, this would create/update state
     console.log('TransferTestHandler called');
@@ -22,7 +17,7 @@ export class ApprovalForAllTestHandler implements PureHandler {
     return 'event ApprovalForAll(address indexed owner, address indexed operator, bool approved)';
   }
 
-  async handleEvent(context: PureHandlerContext): Promise<void> {
+  async handleEvent(_context: any): Promise<void> {
     // Test handler - does nothing for now
     console.log('ApprovalForAllTestHandler called');
   }

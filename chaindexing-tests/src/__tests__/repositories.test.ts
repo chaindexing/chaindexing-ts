@@ -1,7 +1,6 @@
-import { PostgresRepo } from '@chaindexing/postgres';
 import { UnsavedContractAddress, Chain } from '@chaindexing/core';
 import { TestRunner } from '../test-runner';
-import { UnsavedContractAddressFactory, EventFactory } from '../index';
+import { EventFactory } from '../index';
 
 describe('PostgresRepo Tests', () => {
   beforeEach(() => {
@@ -42,7 +41,9 @@ describe('PostgresRepo Tests', () => {
 
         const createdAddress = results.find((ca) => ca.contractName === contractName);
         expect(createdAddress).toBeDefined();
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         expect(createdAddress!.address.toLowerCase()).toBe(contractAddress.toLowerCase());
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         expect(createdAddress!.startBlockNumber).toBe(startBlockNumber);
       });
     });
@@ -73,8 +74,11 @@ describe('PostgresRepo Tests', () => {
 
         const createdAddress = results.find((ca) => ca.contractName === contractName);
         expect(createdAddress).toBeDefined();
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         expect(createdAddress!.nextBlockNumberToIngestFrom).toBe(startBlockNumber);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         expect(createdAddress!.nextBlockNumberToHandleFrom).toBe(startBlockNumber);
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         expect(createdAddress!.nextBlockNumberForSideEffects).toBe(0);
       });
     });
@@ -112,6 +116,7 @@ describe('PostgresRepo Tests', () => {
           (ca) => ca.address.toLowerCase() === baseAddress.address.toLowerCase()
         );
         expect(updatedAddress).toBeDefined();
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         expect(updatedAddress!.contractName).toBe('test-contract-updated');
       });
     });

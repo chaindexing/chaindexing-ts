@@ -1,20 +1,22 @@
 import {
   Chain,
-  createContract,
+  Contract,
+  Event,
   PureHandler,
-  SideEffectHandler,
   PureHandlerContext,
+  SideEffectHandler,
   SideEffectHandlerContext,
   BaseContractState,
   StateMigrations,
-  createFilters,
   createUpdates,
+  createEventIngester,
+  JsonRpcProvider,
+  createContract,
 } from '@chaindexing/core';
 import { Config } from '@chaindexing/config';
 import { PostgresRepo } from '@chaindexing/postgres';
 import { TestRunner } from '../test-runner';
 import { TestDatabase } from '../db';
-import { createEventIngester, JsonRpcProvider } from '@chaindexing/core';
 
 // Test state for integration tests
 class IntegrationNft extends BaseContractState {
@@ -90,6 +92,7 @@ class IntegrationNotificationHandler implements SideEffectHandler<IntegrationSha
 // Mock Web3 Provider for testing
 class MockProvider extends JsonRpcProvider {
   private mockBlockNumber: number = 1000;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private mockLogs: any[] = [];
 
   constructor() {
@@ -100,34 +103,37 @@ class MockProvider extends JsonRpcProvider {
     return this.mockBlockNumber;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async fetchLogs(_filters: any[]): Promise<any[]> {
     return this.mockLogs;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async fetchBlocksByNumber(_blockNumbers: number[]): Promise<Map<number, any>> {
     const blocks = new Map();
-    _blockNumbers.forEach((num) => {
-      blocks.set(num, {
-        number: num,
-        hash: `0x${num.toString(16).padStart(64, '0')}`,
+    for (const blockNumber of _blockNumbers) {
+      blocks.set(blockNumber, {
+        number: blockNumber,
+        hash: `0x${blockNumber.toString(16).padStart(64, '0')}`,
         timestamp: Math.floor(Date.now() / 1000),
-        parentHash: `0x${(num - 1).toString(16).padStart(64, '0')}`,
+        parentHash: `0x${(blockNumber - 1).toString(16).padStart(64, '0')}`,
       });
-    });
+    }
     return blocks;
   }
 
-  // Test helpers
   setMockBlockNumber(blockNumber: number) {
     this.mockBlockNumber = blockNumber;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setMockLogs(logs: any[]) {
     this.mockLogs = logs;
   }
 }
 
 describe('Integration Tests', () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let testDb: TestDatabase;
   let mockProvider: MockProvider;
 

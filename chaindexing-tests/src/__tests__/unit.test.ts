@@ -155,6 +155,7 @@ describe('Core Functionality Unit Tests', () => {
   describe('Config Validation', () => {
     test('validates empty config throws error', () => {
       const mockRepo = new MockRepo();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const config = new Config(mockRepo as any);
 
       expect(() => config.validate()).toThrow('At least one contract is required');
@@ -162,6 +163,7 @@ describe('Core Functionality Unit Tests', () => {
 
     test('validates config with only chains throws error', () => {
       const mockRepo = new MockRepo();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const config = new Config(mockRepo as any).addChain(Chain.Mainnet, 'https://test-url');
 
       expect(() => config.validate()).toThrow('At least one contract is required');
@@ -169,6 +171,7 @@ describe('Core Functionality Unit Tests', () => {
 
     test('config builder methods work correctly', () => {
       const mockRepo = new MockRepo();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const config = new Config(mockRepo as any)
         .addChain(Chain.Mainnet, 'https://mainnet-url')
         .addChain(Chain.Sepolia, 'https://sepolia-url')
@@ -196,6 +199,7 @@ describe('Core Functionality Unit Tests', () => {
 
     test('config reset functionality', () => {
       const mockRepo = new MockRepo();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const config = new Config(mockRepo as any)
         .reset(3)
         .resetIncludingSideEffectsDangerously(1)
@@ -215,10 +219,12 @@ describe('Core Functionality Unit Tests', () => {
       const mockRepo = new MockRepo();
 
       // Test no contracts error
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const emptyConfig = new Config(mockRepo as any);
       expect(() => emptyConfig.validate()).toThrow('At least one contract is required');
 
       // Test no chains error
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const chainOnlyConfig = new Config(mockRepo as any).addChain(
         Chain.Mainnet,
         'https://test-url'
@@ -247,10 +253,12 @@ describe('Core Functionality Unit Tests', () => {
     });
 
     test('updates maintain type safety', () => {
-      const updates = createUpdates('tokenId', 456);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const updates = createUpdates('tokenId', 123);
       expect(typeof updates.getValues().tokenId).toBe('number');
 
-      const stringUpdates = createUpdates('address', '0x456');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const stringUpdates = createUpdates('address', '0x123');
       expect(typeof stringUpdates.getValues().address).toBe('string');
     });
   });
@@ -288,6 +296,7 @@ describe('Handler Interface Tests', () => {
         return 'event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)';
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       async handleEvent(_context: any): Promise<void> {
         // Test implementation
       }
@@ -305,6 +314,7 @@ describe('Handler Interface Tests', () => {
         return 'event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)';
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       async handleEvent(_context: any): Promise<void> {
         // Test implementation
       }

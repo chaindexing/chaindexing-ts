@@ -7,9 +7,7 @@ import {
   createSideEffectHandlerContext,
   BaseContractState,
   StateMigrations,
-  createFilters,
   createUpdates,
-  EventParams,
 } from '@chaindexing/core';
 import { TestRunner } from '../test-runner';
 import { baycContract } from '../factories/contracts';
@@ -220,7 +218,8 @@ describe('Event Handlers Tests', () => {
 
     test('side effect handler without shared state throws', async () => {
       await TestRunner.runTestWithRepo(async (repo, conn) => {
-        const handler = new TestNotificationHandler();
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const _handler = new TestNotificationHandler();
         const contract = baycContract('TestContract', '05');
         const event = transferEventWithContract(contract);
 
@@ -228,7 +227,7 @@ describe('Event Handlers Tests', () => {
         const context = createSideEffectHandlerContext(event, conn);
 
         // Should throw when trying to access shared state
-        await expect(handler.handleEvent(context)).rejects.toThrow('No shared state provided');
+        await expect(_handler.handleEvent(context)).rejects.toThrow('No shared state provided');
       });
     });
   });

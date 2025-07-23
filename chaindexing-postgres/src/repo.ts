@@ -18,7 +18,9 @@ export class PostgresRepo extends Repo<Pool, Conn> {
     await conn.execute(sql.raw(query));
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async execute(conn: Conn, query: string, params: any[] = []) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const client = (await (conn as any).client) || (conn as any);
     if (client.query) {
       return await client.query(query, params);

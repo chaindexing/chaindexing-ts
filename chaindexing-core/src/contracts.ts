@@ -2,6 +2,7 @@ import { Chain } from './chains';
 import { EventAbi, PureHandler, SideEffectHandler } from './handlers';
 
 export interface Contract<SharedState = any> {
+  // eslint-disable-line @typescript-eslint/no-explicit-any -- Generic type parameter for shared state
   addresses: UnsavedContractAddress[];
   name: string;
   pureHandlers: Map<EventAbi, PureHandler>;
@@ -29,6 +30,7 @@ export interface StateMigrations {
 
 // Contract builder class matching the Rust implementation pattern
 export class ContractBuilder<SharedState = any> {
+  // eslint-disable-line @typescript-eslint/no-explicit-any -- Generic type parameter for shared state
   private contract: Contract<SharedState>;
 
   constructor(name: string) {
@@ -93,5 +95,6 @@ export class ContractBuilder<SharedState = any> {
 
 // Helper function to create a new contract
 export function createContract<SharedState = any>(name: string): ContractBuilder<SharedState> {
+  // eslint-disable-line @typescript-eslint/no-explicit-any -- Generic type parameter for shared state
   return new ContractBuilder<SharedState>(name);
 }

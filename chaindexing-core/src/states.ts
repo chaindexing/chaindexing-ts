@@ -2,38 +2,43 @@ import { HandlerContext, PureHandlerContext } from './handlers';
 
 // Filters for querying states
 export interface Filters {
-  add(field: string, value: any): Filters;
-  addMut(field: string, value: any): void;
-  get(): Record<string, any>;
+  add(field: string, value: any): Filters; // eslint-disable-line @typescript-eslint/no-explicit-any
+  addMut(field: string, value: any): void; // eslint-disable-line @typescript-eslint/no-explicit-any
+  get(): Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 // Updates for modifying states
 export interface Updates {
-  add(field: string, value: any): Updates;
-  addMut(field: string, value: any): void;
-  getValues(): Record<string, any>;
+  add(field: string, value: any): Updates; // eslint-disable-line @typescript-eslint/no-explicit-any
+  addMut(field: string, value: any): void; // eslint-disable-line @typescript-eslint/no-explicit-any
+  getValues(): Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 // Filters implementation
 export class FiltersImpl implements Filters {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private values: Record<string, any> = {};
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(field?: string, value?: any) {
     if (field && value !== undefined) {
       this.values[field] = value;
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   add(field: string, value: any): Filters {
     const newFilters = new FiltersImpl();
     newFilters.values = { ...this.values, [field]: value };
     return newFilters;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addMut(field: string, value: any): void {
     this.values[field] = value;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   get(): Record<string, any> {
     return { ...this.values };
   }
@@ -41,34 +46,41 @@ export class FiltersImpl implements Filters {
 
 // Updates implementation
 export class UpdatesImpl implements Updates {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private values: Record<string, any> = {};
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(field?: string, value?: any) {
     if (field && value !== undefined) {
       this.values[field] = value;
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   add(field: string, value: any): Updates {
     const newUpdates = new UpdatesImpl();
     newUpdates.values = { ...this.values, [field]: value };
     return newUpdates;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addMut(field: string, value: any): void {
     this.values[field] = value;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getValues(): Record<string, any> {
     return { ...this.values };
   }
 }
 
 // Helper functions to create Filters and Updates
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function createFilters(field?: string, value?: any): Filters {
   return new FiltersImpl(field, value);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function createUpdates(field?: string, value?: any): Updates {
   return new UpdatesImpl(field, value);
 }
@@ -116,8 +128,11 @@ export abstract class BaseState implements State {
   abstract tableName(): string;
 
   // Convert this state object to a database view (key-value pairs)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected toView(): Record<string, any> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result: Record<string, any> = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const obj = this as any;
 
     // Get all enumerable properties (including constructor parameters)
@@ -133,7 +148,7 @@ export abstract class BaseState implements State {
       if (
         typeof descriptor.value !== 'function' &&
         key !== 'constructor' &&
-        !result.hasOwnProperty(key)
+        !Object.prototype.hasOwnProperty.call(result, key)
       ) {
         result[key] = descriptor.value;
       }
@@ -156,7 +171,7 @@ export abstract class BaseContractState extends BaseState implements ContractSta
         acc[snakeKey] = value;
         return acc;
       },
-      {} as Record<string, any>
+      {} as Record<string, any> // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Database values can be any type
     );
 
     const columns = Object.keys(dbValues).join(', ');
@@ -184,7 +199,7 @@ export abstract class BaseContractState extends BaseState implements ContractSta
         `Invalid query or values for create operation: query="${query}", values=${JSON.stringify(valueArray)}`
       );
     }
-    await (context.repoClient as any).execute(query, valueArray);
+    await (context.repoClient as any).execute(query, valueArray); // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Will be typed properly when repo integration is complete
   }
 
   async update(updates: Updates, context: PureHandlerContext): Promise<void> {
@@ -199,7 +214,7 @@ export abstract class BaseContractState extends BaseState implements ContractSta
         acc[snakeKey] = value;
         return acc;
       },
-      {} as Record<string, any>
+      {} as Record<string, any> // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Database values can be any type
     );
 
     const dbCurrentValues = Object.entries(currentValues).reduce(
@@ -208,7 +223,7 @@ export abstract class BaseContractState extends BaseState implements ContractSta
         acc[snakeKey] = value;
         return acc;
       },
-      {} as Record<string, any>
+      {} as Record<string, any> // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Database values can be any type
     );
 
     const setClauses = Object.keys(dbUpdates)
@@ -221,7 +236,7 @@ export abstract class BaseContractState extends BaseState implements ContractSta
     const values = [...Object.values(dbUpdates), ...Object.values(dbCurrentValues)];
     const query = `UPDATE ${tableName} SET ${setClauses} WHERE ${whereConditions}`;
 
-    await (context.repoClient as any).execute(query, values);
+    await (context.repoClient as any).execute(query, values); // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Will be typed properly when repo integration is complete
   }
 
   async delete(context: PureHandlerContext): Promise<void> {
@@ -235,7 +250,7 @@ export abstract class BaseContractState extends BaseState implements ContractSta
         acc[snakeKey] = value;
         return acc;
       },
-      {} as Record<string, any>
+      {} as Record<string, any> // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Database values can be any type
     );
 
     const whereConditions = Object.keys(dbValues)
@@ -245,36 +260,36 @@ export abstract class BaseContractState extends BaseState implements ContractSta
 
     const query = `DELETE FROM ${tableName} WHERE ${whereConditions}`;
 
-    await (context.repoClient as any).execute(query, values);
+    await (context.repoClient as any).execute(query, values); // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Will be typed properly when repo integration is complete
   }
 }
 
 // Abstract ChainState implementation
 export abstract class BaseChainState extends BaseState implements ChainState {
-  async create(context: PureHandlerContext): Promise<void> {
+  async create(_context: PureHandlerContext): Promise<void> {
     throw new Error('BaseChainState.create() not implemented - needs repo integration');
   }
 
-  async update(updates: Updates, context: PureHandlerContext): Promise<void> {
+  async update(_updates: Updates, _context: PureHandlerContext): Promise<void> {
     throw new Error('BaseChainState.update() not implemented - needs repo integration');
   }
 
-  async delete(context: PureHandlerContext): Promise<void> {
+  async delete(_context: PureHandlerContext): Promise<void> {
     throw new Error('BaseChainState.delete() not implemented - needs repo integration');
   }
 }
 
 // Abstract MultiChainState implementation
 export abstract class BaseMultiChainState extends BaseState implements MultiChainState {
-  async create(context: PureHandlerContext): Promise<void> {
+  async create(_context: PureHandlerContext): Promise<void> {
     throw new Error('BaseMultiChainState.create() not implemented - needs repo integration');
   }
 
-  async update(updates: Updates, context: PureHandlerContext): Promise<void> {
+  async update(_updates: Updates, _context: PureHandlerContext): Promise<void> {
     throw new Error('BaseMultiChainState.update() not implemented - needs repo integration');
   }
 
-  async delete(context: PureHandlerContext): Promise<void> {
+  async delete(_context: PureHandlerContext): Promise<void> {
     throw new Error('BaseMultiChainState.delete() not implemented - needs repo integration');
   }
 }

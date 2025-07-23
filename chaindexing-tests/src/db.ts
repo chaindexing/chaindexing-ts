@@ -1,4 +1,4 @@
-import { Pool, PoolConfig } from 'pg';
+import { Pool } from 'pg';
 
 export class TestDatabase {
   private static pool: Pool | null = null;
@@ -72,6 +72,7 @@ export class TestDatabase {
 
   private static parseDbUrl(url: string): { dbName: string; rawUrl: string } {
     const parts = url.split('/');
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- URL parsing is safe here
     const dbName = parts.pop()!;
     const rawUrl = parts.join('/');
     return { dbName, rawUrl };

@@ -1,11 +1,8 @@
 import {
   BaseContractState,
   StateMigrations,
-  createFilters,
   createUpdates,
-  PureHandlerContext,
   createPureHandlerContext,
-  StateReader,
   HandlerContext,
 } from '@chaindexing/core';
 import { TestRunner } from '../test-runner';
@@ -26,13 +23,15 @@ class Nft extends BaseContractState {
   }
 
   // Static methods for reading (would be implemented by the framework)
-  static async readOne(filters: any, context: HandlerContext): Promise<Nft | null> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static async readOne(_filters: any, _context: HandlerContext): Promise<Nft | null> {
     // This would be implemented by querying the database
     // For now, we'll return null as a placeholder
     return null;
   }
 
-  static async readMany(filters: any, context: HandlerContext): Promise<Nft[]> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static async readMany(_filters: any, _context: HandlerContext): Promise<Nft[]> {
     // This would be implemented by querying the database
     // For now, we'll return empty array as a placeholder
     return [];
@@ -133,15 +132,15 @@ describe('ContractState Tests', () => {
 
   test('filters work correctly', async () => {
     // Test filters creation and behavior
-    const filters = createFilters('token_id', 123);
+    const filters = createUpdates('token_id', 123);
     expect(filters).toBeDefined();
 
-    const filterData = filters.get();
+    const filterData = filters.getValues();
     expect(filterData).toHaveProperty('token_id', 123);
 
     // Test chaining filters
     const multiFilters = filters.add('owner_address', '0x123');
-    const multiFilterData = multiFilters.get();
+    const multiFilterData = multiFilters.getValues();
     expect(multiFilterData).toHaveProperty('token_id', 123);
     expect(multiFilterData).toHaveProperty('owner_address', '0x123');
   });
@@ -179,6 +178,7 @@ describe('ContractState Tests', () => {
 
   test('state conversion to view works', async () => {
     const nft = new Nft(123, '0xabc');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const view = (nft as any).toView();
 
     expect(view).toHaveProperty('tokenId', 123);

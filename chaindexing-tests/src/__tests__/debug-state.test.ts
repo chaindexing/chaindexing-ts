@@ -16,6 +16,7 @@ class TestNft extends BaseContractState {
 describe('Debug State Properties', () => {
   test('state toView returns correct properties', () => {
     const nft = new TestNft(123, '0x123');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const view = (nft as any).toView();
 
     console.log('NFT object keys:', Object.keys(nft));
