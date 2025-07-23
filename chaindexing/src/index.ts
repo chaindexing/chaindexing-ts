@@ -21,7 +21,7 @@ export async function indexStates<Pool, Conn, UserRepo extends Repo<Pool, Conn>,
       handlerRateMs: config.handlerRateMs,
       ingestionRateMs: config.ingestionRateMs,
       chainConcurrency: config.chainConcurrency,
-      sharedState: config.sharedState
+      sharedState: config.sharedState,
     }
   );
 

@@ -34,7 +34,7 @@ import {
   PureHandlerContext,
   BaseContractState,
   createFilters,
-  createUpdates
+  createUpdates,
 } from '@chaindexing/chaindexing';
 import { Config } from '@chaindexing/config';
 import { PostgresRepo } from '@chaindexing/postgres';
@@ -86,7 +86,7 @@ class NftMigrations {
       `CREATE TABLE IF NOT EXISTS nfts (
         token_id INTEGER NOT NULL,
         owner_address TEXT NOT NULL
-      )`
+      )`,
     ];
   }
 }

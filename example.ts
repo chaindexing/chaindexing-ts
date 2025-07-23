@@ -7,12 +7,11 @@ import {
   PureHandlerContext,
   SideEffectHandlerContext,
   BaseContractState,
-  createFilters,
   createUpdates,
-  StateMigrations
-} from './chaindexing';
-import { Config } from './chaindexing-config';
-import { PostgresRepo } from './chaindexing-postgres';
+  StateMigrations,
+} from './chaindexing/src';
+import { Config } from './chaindexing-config/src';
+import { PostgresRepo } from './chaindexing-postgres/src';
 
 // Example NFT state
 class Nft extends BaseContractState {
@@ -40,7 +39,7 @@ class NftMigrations implements StateMigrations {
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
       )`,
-      `CREATE UNIQUE INDEX IF NOT EXISTS nfts_token_id_index ON nfts(token_id)`
+      `CREATE UNIQUE INDEX IF NOT EXISTS nfts_token_id_index ON nfts(token_id)`,
     ];
   }
 }
@@ -60,22 +59,19 @@ class TransferHandler implements PureHandler {
 
     console.log(`Processing Transfer: ${from} -> ${to}, tokenId: ${tokenId}`);
 
-    // Check if NFT already exists
-    const filters = createFilters('token_id', tokenId);
-
     // In a real implementation, this would query the database
     // For now, we'll create a new NFT or update existing one
     if (from === '0x0000000000000000000000000000000000000000') {
       // Mint: create new NFT
       const newNft = new Nft(tokenId, to);
-      await newNft.create(context);
       console.log(`Minted NFT ${tokenId} to ${to}`);
+      // In real implementation: await newNft.create(context);
     } else {
       // Transfer: update existing NFT
       const existingNft = new Nft(tokenId, from);
       const updates = createUpdates('owner_address', to);
-      await existingNft.update(updates, context);
       console.log(`Transferred NFT ${tokenId} from ${from} to ${to}`);
+      // In real implementation: await existingNft.update(updates, context);
     }
   }
 }
@@ -135,7 +131,7 @@ async function main() {
       // Add shared state for side effects
       .withInitialState<AppState>({
         notificationCount: 0,
-        lastProcessedBlock: 0
+        lastProcessedBlock: 0,
       })
       // Add contract with handlers
       .addContract(

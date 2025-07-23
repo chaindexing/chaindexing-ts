@@ -3,7 +3,7 @@ import { Repo } from '@chaindexing/repos';
 
 export enum ConfigErrorType {
   NoContract,
-  NoChain
+  NoChain,
 }
 
 class ConfigError extends Error {

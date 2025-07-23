@@ -23,7 +23,7 @@ export interface PureHandler {
   // Human-readable ABI of the event being handled
   // Example: "event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)"
   abi(): string;
-  
+
   // Handle the event deterministically
   handleEvent(context: PureHandlerContext): Promise<void>;
 }
@@ -50,7 +50,9 @@ export class PureHandlerContextImpl implements PureHandlerContext {
 }
 
 // Implementation of SideEffectHandlerContext
-export class SideEffectHandlerContextImpl<SharedState = any> implements SideEffectHandlerContext<SharedState> {
+export class SideEffectHandlerContextImpl<SharedState = any>
+  implements SideEffectHandlerContext<SharedState>
+{
   constructor(
     public event: Event,
     public repoClient: any,
@@ -75,9 +77,9 @@ export function createPureHandlerContext(event: Event, repoClient: any): PureHan
 }
 
 export function createSideEffectHandlerContext<SharedState = any>(
-  event: Event, 
-  repoClient: any, 
+  event: Event,
+  repoClient: any,
   sharedState?: SharedState
 ): SideEffectHandlerContext<SharedState> {
   return new SideEffectHandlerContextImpl(event, repoClient, sharedState);
-} 
+}

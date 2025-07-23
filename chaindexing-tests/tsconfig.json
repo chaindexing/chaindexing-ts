@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "..",
+    "paths": {
+      "@chaindexing/core": ["./chaindexing-core/src"],
+      "@chaindexing/config": ["./chaindexing-config/src"],
+      "@chaindexing/repos": ["./chaindexing-repos/src"],
+      "@chaindexing/postgres": ["./chaindexing-postgres/src"],
+      "@chaindexing/chaindexing": ["./chaindexing/src"]
+    },
+    "types": ["jest", "node"]
+  },
+  "include": ["src/**/*"]
+}

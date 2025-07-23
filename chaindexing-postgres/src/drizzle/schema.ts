@@ -7,7 +7,7 @@ import {
   text,
   timestamp,
   uniqueIndex,
-  uuid
+  uuid,
 } from 'drizzle-orm/pg-core';
 
 export const chaindexingContractAddressesSchema = pgTable(
@@ -19,12 +19,13 @@ export const chaindexingContractAddressesSchema = pgTable(
     contractName: text('contract_name').notNull(),
     startBlockNumber: integer('start_block_number').notNull(),
     nextBlockNumberToIngestFrom: integer('next_block_number_to_ingest_from').notNull(),
-    nextBlockNumberToHandleFrom: integer('next_block_number_to_handle_from').notNull()
+    nextBlockNumberToHandleFrom: integer('next_block_number_to_handle_from').notNull(),
+    nextBlockNumberForSideEffects: integer('next_block_number_for_side_effects').notNull(),
   },
   (chaindexingContractAddress) => ({
     chaindexingContractAddressesChainAddressIndex: uniqueIndex(
       'chaindexing_contract_addresses_chain_address_index'
-    ).on(chaindexingContractAddress.chainId, chaindexingContractAddress.address)
+    ).on(chaindexingContractAddress.chainId, chaindexingContractAddress.address),
   })
 );
 
@@ -44,5 +45,5 @@ export const chaindexingEventsSchema = pgTable('chaindexing_events', {
   transactionIndex: integer('transaction_index').notNull(),
   logIndex: integer('log_index').notNull(),
   removed: boolean('removed').notNull(),
-  insertedAt: timestamp('inserted_at', { withTimezone: true }).notNull().defaultNow()
+  insertedAt: timestamp('inserted_at', { withTimezone: true }).notNull().defaultNow(),
 });

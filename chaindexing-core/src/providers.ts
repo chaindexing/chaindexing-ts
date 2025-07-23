@@ -72,7 +72,7 @@ export class EventIngesterImpl implements EventIngester {
     const filters: LogFilter[] = contractAddresses.map((address) => ({
       address,
       fromBlock,
-      toBlock
+      toBlock,
     }));
 
     // Fetch logs from the provider
@@ -113,7 +113,7 @@ export class EventIngesterImpl implements EventIngester {
         transactionIndex: log.transactionIndex,
         logIndex: log.logIndex,
         blockTimestamp: block.timestamp,
-        removed: log.removed
+        removed: log.removed,
       };
     });
 
@@ -125,7 +125,7 @@ export class EventIngesterImpl implements EventIngester {
     // Real implementation would decode log data using ABI
     return {
       rawData: log.data,
-      rawTopics: log.topics
+      rawTopics: log.topics,
     };
   }
 
@@ -133,7 +133,7 @@ export class EventIngesterImpl implements EventIngester {
     // This is a placeholder implementation
     return {
       data: log.data,
-      topics: log.topics.join(',')
+      topics: log.topics.join(','),
     };
   }
 
@@ -170,7 +170,7 @@ export class JsonRpcProvider implements Provider {
         address: filter.address,
         topics: filter.topics,
         fromBlock: `0x${filter.fromBlock.toString(16)}`,
-        toBlock: `0x${filter.toBlock.toString(16)}`
+        toBlock: `0x${filter.toBlock.toString(16)}`,
       };
 
       const response = await this.jsonRpcCall('eth_getLogs', [params]);
@@ -185,7 +185,7 @@ export class JsonRpcProvider implements Provider {
         transactionHash: log.transactionHash,
         transactionIndex: parseInt(log.transactionIndex, 16),
         logIndex: parseInt(log.logIndex, 16),
-        removed: log.removed || false
+        removed: log.removed || false,
       }));
 
       allLogs.push(...parsedLogs);
@@ -200,7 +200,7 @@ export class JsonRpcProvider implements Provider {
     for (const blockNumber of blockNumbers) {
       const response = await this.jsonRpcCall('eth_getBlockByNumber', [
         `0x${blockNumber.toString(16)}`,
-        false
+        false,
       ]);
 
       if (response.result) {
@@ -209,7 +209,7 @@ export class JsonRpcProvider implements Provider {
           number: parseInt(block.number, 16),
           hash: block.hash,
           timestamp: parseInt(block.timestamp, 16),
-          parentHash: block.parentHash
+          parentHash: block.parentHash,
         });
       }
     }
@@ -233,14 +233,14 @@ export class JsonRpcProvider implements Provider {
     const response = await fetchFn(this.rpcUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         jsonrpc: '2.0',
         id: Date.now(),
         method,
-        params
-      })
+        params,
+      }),
     });
 
     if (!response.ok) {

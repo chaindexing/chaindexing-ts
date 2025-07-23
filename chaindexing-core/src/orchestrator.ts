@@ -5,7 +5,7 @@ import {
   PureHandler,
   SideEffectHandler,
   createPureHandlerContext,
-  createSideEffectHandlerContext
+  createSideEffectHandlerContext,
 } from './handlers';
 import { Provider, EventIngester, createEventIngester } from './providers';
 
@@ -25,7 +25,7 @@ export interface NodeTask {
 }
 
 // Event processing orchestrator
-export class EventOrchestrator<SharedState = any> {
+export class EventOrchestrator<SharedState = unknown> {
   private isRunning = false;
   private nodeTask?: NodeTask;
   private providers = new Map<Chain, Provider>();
@@ -34,7 +34,7 @@ export class EventOrchestrator<SharedState = any> {
   constructor(
     private contracts: Contract<SharedState>[],
     private chains: Map<Chain, string>, // chain -> rpc url
-    private repo: any, // Repository client
+    private repo: unknown, // Repository client
     private config: {
       blocksPerBatch: number;
       handlerRateMs: number;
@@ -47,9 +47,9 @@ export class EventOrchestrator<SharedState = any> {
   }
 
   private initializeProviders(): void {
-    this.chains.forEach((rpcUrl, chainId) => {
+    this.chains.forEach((_rpcUrl, chainId) => {
       // This would use a proper provider implementation
-      const provider = this.createProvider(rpcUrl);
+      const provider = this.createProvider(_rpcUrl);
       const ingester = createEventIngester(provider, chainId);
 
       this.providers.set(chainId, provider);
@@ -57,13 +57,13 @@ export class EventOrchestrator<SharedState = any> {
     });
   }
 
-  private createProvider(rpcUrl: string): Provider {
+  private createProvider(_rpcUrl: string): Provider {
     // This would be implemented with a proper Web3 provider
     // For now, return a placeholder
     return {
       fetchLogs: async () => [],
       fetchBlocksByNumber: async () => new Map(),
-      getCurrentBlockNumber: async () => 0
+      getCurrentBlockNumber: async () => 0,
     };
   }
 
@@ -75,8 +75,8 @@ export class EventOrchestrator<SharedState = any> {
     this.isRunning = true;
 
     // Start event ingestion for each chain
-    const ingestionTasks = Array.from(this.chains.keys()).map((chainId) =>
-      this.startIngestionForChain(chainId)
+    const ingestionTasks = Array.from(this.chains.keys()).map((_chainId) =>
+      this.startIngestionForChain(_chainId)
     );
 
     // Start event handling
@@ -93,21 +93,21 @@ export class EventOrchestrator<SharedState = any> {
     }
   }
 
-  private async startIngestionForChain(chainId: Chain): Promise<void> {
-    const ingester = this.ingesters.get(chainId);
+  private async startIngestionForChain(_chainId: Chain): Promise<void> {
+    const ingester = this.ingesters.get(_chainId);
     if (!ingester) {
-      throw new Error(`No ingester found for chain ${chainId}`);
+      throw new Error(`No ingester found for chain ${_chainId}`);
     }
 
     while (this.isRunning) {
       try {
         // Get contract addresses for this chain
-        const contractAddresses = this.getContractAddressesForChain(chainId);
+        const contractAddresses = this.getContractAddressesForChain(_chainId);
 
         if (contractAddresses.length > 0) {
           // Determine block range to ingest
-          const currentBlock = await this.getCurrentBlockNumber(chainId);
-          const fromBlock = await this.getLastIngestedBlock(chainId);
+          const currentBlock = await this.getCurrentBlockNumber(_chainId);
+          const fromBlock = await this.getLastIngestedBlock(_chainId);
           const toBlock = Math.min(fromBlock + this.config.blocksPerBatch, currentBlock);
 
           if (fromBlock < toBlock) {
@@ -131,7 +131,7 @@ export class EventOrchestrator<SharedState = any> {
         // Wait before next ingestion cycle
         await this.sleep(this.config.ingestionRateMs);
       } catch (error) {
-        console.error(`Error in ingestion for chain ${chainId}:`, error);
+        console.error(`Error in ingestion for chain ${_chainId}:`, error);
         await this.sleep(this.config.ingestionRateMs);
       }
     }
@@ -141,8 +141,8 @@ export class EventOrchestrator<SharedState = any> {
     while (this.isRunning) {
       try {
         // Process events for each chain sequentially
-        for (const chainId of this.chains.keys()) {
-          await this.handleEventsForChain(chainId);
+        for (const _chainId of this.chains.keys()) {
+          await this.handleEventsForChain(_chainId);
         }
 
         // Wait before next handling cycle
@@ -154,12 +154,12 @@ export class EventOrchestrator<SharedState = any> {
     }
   }
 
-  private async handleEventsForChain(chainId: Chain): Promise<void> {
-    const contractAddresses = this.getContractAddressesForChain(chainId);
+  private async handleEventsForChain(_chainId: Chain): Promise<void> {
+    const contractAddresses = this.getContractAddressesForChain(_chainId);
 
-    for (const contractAddress of contractAddresses) {
+    for (const _contractAddress of contractAddresses) {
       // Get unprocessed events for this contract
-      const events = await this.getUnprocessedEvents(contractAddress);
+      const events = await this.getUnprocessedEvents(_contractAddress);
 
       for (const event of events) {
         // Handle pure events (deterministic state indexing)
@@ -169,7 +169,7 @@ export class EventOrchestrator<SharedState = any> {
         await this.handleSideEffectEvent(event);
 
         // Mark event as processed
-        await this.markEventAsProcessed(event, contractAddress);
+        await this.markEventAsProcessed(event, _contractAddress);
       }
     }
   }
@@ -179,8 +179,8 @@ export class EventOrchestrator<SharedState = any> {
     const handler = this.findPureHandler(event.abi);
 
     if (handler) {
-      const context = createPureHandlerContext(event, this.repo);
-      await handler.handleEvent(context);
+      const _context = createPureHandlerContext(event, this.repo);
+      await handler.handleEvent(_context);
     }
   }
 
@@ -189,8 +189,8 @@ export class EventOrchestrator<SharedState = any> {
     const handler = this.findSideEffectHandler(event.abi);
 
     if (handler) {
-      const context = createSideEffectHandlerContext(event, this.repo, this.config.sharedState);
-      await handler.handleEvent(context);
+      const _context = createSideEffectHandlerContext(event, this.repo, this.config.sharedState);
+      await handler.handleEvent(_context);
     }
   }
 
@@ -214,15 +214,15 @@ export class EventOrchestrator<SharedState = any> {
     return null;
   }
 
-  private getContractAddressesForChain(chainId: Chain): ContractAddress[] {
+  private getContractAddressesForChain(_chainId: Chain): ContractAddress[] {
     const addresses: ContractAddress[] = [];
 
     this.contracts.forEach((contract) => {
       contract.addresses.forEach((address) => {
-        if (address.chainId === chainId) {
+        if (address.chainId === _chainId) {
           addresses.push({
             ...address,
-            id: 0 // Would be populated from database
+            id: 0, // Would be populated from database
           });
         }
       });
@@ -231,37 +231,37 @@ export class EventOrchestrator<SharedState = any> {
     return addresses;
   }
 
-  private async getCurrentBlockNumber(chainId: Chain): Promise<number> {
-    const provider = this.providers.get(chainId);
+  private async getCurrentBlockNumber(_chainId: Chain): Promise<number> {
+    const provider = this.providers.get(_chainId);
     if (!provider) {
-      throw new Error(`No provider found for chain ${chainId}`);
+      throw new Error(`No provider found for chain ${_chainId}`);
     }
     return await provider.getCurrentBlockNumber();
   }
 
-  private async getLastIngestedBlock(chainId: Chain): Promise<number> {
+  private async getLastIngestedBlock(_chainId: Chain): Promise<number> {
     // This would query the repository for the last ingested block
     // For now, return a placeholder
     return 0;
   }
 
-  private async storeEvents(events: any[]): Promise<void> {
+  private async storeEvents(events: unknown[]): Promise<void> {
     // This would use the repository to store events
     // Implementation depends on the repository interface
     console.log(`Storing ${events.length} events`);
   }
 
   private async updateLastIngestedBlocks(
-    contractAddresses: ContractAddress[],
+    _contractAddresses: ContractAddress[],
     blockNumber: number
   ): Promise<void> {
     // This would update the last ingested block numbers in the repository
     console.log(
-      `Updating last ingested block to ${blockNumber} for ${contractAddresses.length} contracts`
+      `Updating last ingested block to ${blockNumber} for ${_contractAddresses.length} contracts`
     );
   }
 
-  private async getUnprocessedEvents(contractAddress: ContractAddress): Promise<Event[]> {
+  private async getUnprocessedEvents(_contractAddress: ContractAddress): Promise<Event[]> {
     // This would query the repository for unprocessed events
     // For now, return empty array
     return [];
@@ -269,10 +269,10 @@ export class EventOrchestrator<SharedState = any> {
 
   private async markEventAsProcessed(
     event: Event,
-    contractAddress: ContractAddress
+    _contractAddress: ContractAddress
   ): Promise<void> {
     // This would update the repository to mark the event as processed
-    console.log(`Marking event ${event.id} as processed for contract ${contractAddress.address}`);
+    console.log(`Marking event ${event.id} as processed for contract ${_contractAddress.address}`);
   }
 
   private async sleep(ms: number): Promise<void> {
@@ -308,10 +308,10 @@ export class NodeTaskImpl implements NodeTask {
 }
 
 // Helper function to create an orchestrator
-export function createOrchestrator<SharedState = any>(
+export function createOrchestrator<SharedState = unknown>(
   contracts: Contract<SharedState>[],
   chains: Map<Chain, string>,
-  repo: any,
+  repo: unknown,
   config: {
     blocksPerBatch: number;
     handlerRateMs: number;

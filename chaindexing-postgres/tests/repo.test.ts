@@ -22,7 +22,7 @@ describe('Repo', async () => {
 
       const contractAddressStream = repo.getContractAddressesStream(conn);
 
-      let contractAddresses = (await contractAddressStream.next()) as ContractAddress[];
+      const contractAddresses = (await contractAddressStream.next()) as ContractAddress[];
 
       const contractAddressesSorted = contractAddresses.toSorted();
 
@@ -42,7 +42,7 @@ describe('Repo', async () => {
 
       const contractAddressStream = repo.getContractAddressesStream(conn);
 
-      let contractAddresses = (await contractAddressStream.next()) as ContractAddress[];
+      const contractAddresses = (await contractAddressStream.next()) as ContractAddress[];
 
       expect(contractAddresses).to.have.length(1);
       const [{ contractName }] = contractAddresses;
@@ -54,7 +54,7 @@ describe('Repo', async () => {
 
       const contractAddressStream = repo.getContractAddressesStream(conn);
 
-      let contractAddresses = await contractAddressStream.next();
+      const contractAddresses = await contractAddressStream.next();
 
       expect(contractAddresses).to.deep.equal([]);
     });
@@ -66,7 +66,7 @@ describe('Repo', async () => {
       await repo.createContractAddresses(conn, [unsavedContractAddress]);
 
       const contractAddressStream = repo.getContractAddressesStream(conn);
-      let contractAddresses = (await contractAddressStream.next()) as ContractAddress[];
+      const contractAddresses = (await contractAddressStream.next()) as ContractAddress[];
       const [{ id, ...contractAddress }] = contractAddresses;
 
       expect(contractAddress).to.deep.equal(unsavedContractAddress);
@@ -75,7 +75,7 @@ describe('Repo', async () => {
     it('returns an empty list when there are no contract addresses in the repo', async (conn) => {
       const contractAddressStream = repo.getContractAddressesStream(conn);
 
-      let contractAddresses = await contractAddressStream.next();
+      const contractAddresses = await contractAddressStream.next();
 
       expect(contractAddresses).to.deep.equal([]);
     });
@@ -88,7 +88,7 @@ describe('Repo', async () => {
 
       const eventsStream = repo.getEventsStream(conn);
 
-      let events = (await eventsStream.next()) as Event[];
+      const events = (await eventsStream.next()) as Event[];
 
       const eventsSorted = events.toSorted();
 
@@ -102,7 +102,7 @@ describe('Repo', async () => {
 
       const eventsStream = repo.getEventsStream(conn);
 
-      let contractAddresses = await eventsStream.next();
+      const contractAddresses = await eventsStream.next();
 
       expect(contractAddresses).to.deep.equal([]);
     });

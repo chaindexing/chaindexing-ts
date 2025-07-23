@@ -37,12 +37,16 @@ export class ContractBuilder<SharedState = any> {
       name,
       pureHandlers: new Map(),
       sideEffectHandlers: new Map(),
-      stateMigrations: []
+      stateMigrations: [],
     };
   }
 
   // Add a contract address to this contract
-  addAddress(address: string, chainId: Chain, startBlockNumber: number): ContractBuilder<SharedState> {
+  addAddress(
+    address: string,
+    chainId: Chain,
+    startBlockNumber: number
+  ): ContractBuilder<SharedState> {
     this.contract.addresses.push({
       chainId,
       startBlockNumber,
@@ -50,7 +54,7 @@ export class ContractBuilder<SharedState = any> {
       contractName: this.contract.name,
       nextBlockNumberToIngestFrom: startBlockNumber,
       nextBlockNumberToHandleFrom: startBlockNumber,
-      nextBlockNumberForSideEffects: startBlockNumber
+      nextBlockNumberForSideEffects: startBlockNumber,
     });
     return this;
   }
