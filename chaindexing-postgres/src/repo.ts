@@ -1,5 +1,5 @@
 import { ContractAddress, Event, UnsavedContractAddress, UnsavedEvent } from '@chaindexing/core';
-import { Repo } from '@chaindexing/repos';
+import { Repo, SQLikeMigrations } from '@chaindexing/repos';
 import { randomUUID } from 'crypto';
 import { sql } from 'drizzle-orm';
 import { NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
@@ -18,10 +18,19 @@ export class PostgresRepo extends Repo<Pool, Conn> {
     await conn.execute(sql.raw(query));
   }
 
+  async execute(conn: Conn, query: string, params: any[] = []) {
+    const client = (await (conn as any).client) || (conn as any);
+    if (client.query) {
+      return await client.query(query, params);
+    }
+    // Fallback to drizzle raw execution
+    await conn.execute(sql.raw(query));
+  }
+
   async getPool(maxSize: number) {
     return new Pool({
       connectionString: this.url,
-      max: maxSize
+      max: maxSize,
     });
   }
 
@@ -42,9 +51,9 @@ export class PostgresRepo extends Repo<Pool, Conn> {
       .onConflictDoUpdate({
         target: [
           chaindexingContractAddressesSchema.chainId,
-          chaindexingContractAddressesSchema.address
+          chaindexingContractAddressesSchema.address,
         ],
-        set: { contractName: sql`excluded."contract_name"` }
+        set: { contractName: sql`excluded."contract_name"` },
       });
   }
 
@@ -60,7 +69,7 @@ export class PostgresRepo extends Repo<Pool, Conn> {
         currentPage += 1;
 
         return conn.query.chaindexingContractAddressesSchema.findMany({ limit, offset });
-      }
+      },
     };
   }
 
@@ -84,10 +93,10 @@ export class PostgresRepo extends Repo<Pool, Conn> {
 
         const result = conn.query.chaindexingEventsSchema.findMany({
           limit,
-          offset
+          offset,
         });
         return result;
-      }
+      },
     };
   }
 
@@ -97,5 +106,34 @@ export class PostgresRepo extends Repo<Pool, Conn> {
     _blockNumber: number
   ) {
     // TODO: Implement
+  }
+
+  // Implement migration methods
+  create_contract_addresses_migration(): string[] {
+    return SQLikeMigrations.create_contract_addresses();
+  }
+
+  drop_contract_addresses_migration(): string[] {
+    return SQLikeMigrations.drop_contract_addresses();
+  }
+
+  create_events_migration(): string[] {
+    return SQLikeMigrations.create_events();
+  }
+
+  drop_events_migration(): string[] {
+    return SQLikeMigrations.drop_events();
+  }
+
+  async migrate(conn: Conn, migrations: string[]): Promise<void> {
+    for (const migration of migrations) {
+      if (migration.trim()) {
+        await this.execute_raw_query(conn, migration);
+      }
+    }
+  }
+
+  getInternalMigrations(): string[] {
+    return [...this.create_contract_addresses_migration(), ...this.create_events_migration()];
   }
 }

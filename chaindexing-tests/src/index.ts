@@ -3,10 +3,11 @@ import { UnsavedContractAddress, UnsavedEvent } from '@chaindexing/core';
 // Export global test modules
 export class UnsavedContractAddressFactory {
   static manyNewConflicting(size: number): UnsavedContractAddress[] {
-    return this.manyNew(size).map((unsavedContractAddress) => ({
+    return this.manyNew(size).map((unsavedContractAddress, index) => ({
       ...unsavedContractAddress,
       chainId: 1,
-      address: '0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f12A'
+      address: '0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f12A',
+      contractName: `test-address-${index}`, // Different contract names to avoid conflicts
     }));
   }
   static manyNew(size: number): UnsavedContractAddress[] {
@@ -21,7 +22,8 @@ export class UnsavedContractAddressFactory {
       contractName: `test-address-${addressIndex}`,
       startBlockNumber,
       nextBlockNumberToIngestFrom: startBlockNumber,
-      nextBlockNumberToHandleFrom: startBlockNumber
+      nextBlockNumberToHandleFrom: startBlockNumber,
+      nextBlockNumberForSideEffects: startBlockNumber,
     };
   }
 }
@@ -47,7 +49,7 @@ export class EventFactory {
       transactionIndex: 456,
       logIndex: 789,
       blockTimestamp: getRandomInteger(2000000),
-      removed: false
+      removed: false,
     };
   }
 }

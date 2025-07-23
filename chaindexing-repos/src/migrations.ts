@@ -30,10 +30,11 @@ export class SQLikeMigrations {
         chain_id INTEGER NOT NULL,
         start_block_number BIGINT NOT NULL,
         next_block_number_to_ingest_from BIGINT NULL,
-        next_block_number_to_handle_from BIGINT NULL
+        next_block_number_to_handle_from BIGINT NULL,
+        next_block_number_for_side_effects BIGINT NULL
     )`,
       `CREATE UNIQUE INDEX IF NOT EXISTS chaindexing_contract_addresses_chain_address_index
-    ON chaindexing_contract_addresses(chain_id, address)`
+    ON chaindexing_contract_addresses(chain_id, address)`,
     ];
   }
 
@@ -64,7 +65,7 @@ export class SQLikeMigrations {
       `CREATE UNIQUE INDEX IF NOT EXISTS chaindexing_events_chain_transaction_hash_log_index
       ON chaindexing_events(chain_id,transaction_hash,log_index)`,
       `CREATE INDEX IF NOT EXISTS chaindexing_events_abi
-      ON chaindexing_events(abi)`
+      ON chaindexing_events(abi)`,
     ];
   }
 

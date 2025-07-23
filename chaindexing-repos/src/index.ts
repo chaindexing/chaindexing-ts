@@ -1,5 +1,5 @@
 import { ContractAddress, Event, UnsavedContractAddress, UnsavedEvent } from '@chaindexing/core';
-import { Migratable } from './migrations';
+import { Migratable, RepoMigrations } from './migrations';
 
 export abstract class Repo<Pool, Conn> extends Migratable<Conn> {
   abstract getPool(maxSize: number): Promise<Pool>;
@@ -30,6 +30,17 @@ export abstract class Repo<Pool, Conn> extends Migratable<Conn> {
     contractAddresses: ContractAddress[],
     blockNumber: number
   ): Promise<void>;
+
+  // Abstract methods from RepoMigrations that concrete repos must implement
+  abstract create_contract_addresses_migration(): string[];
+  abstract drop_contract_addresses_migration(): string[];
+  abstract create_events_migration(): string[];
+  abstract drop_events_migration(): string[];
+
+  // Concrete implementation from RepoMigrations
+  getInternalMigrations(): string[] {
+    return [this.create_contract_addresses_migration(), this.create_events_migration()].flat();
+  }
 }
 
 export * from './migrations';
